@@ -11,6 +11,8 @@ function updateState() {
 }
 
 function updateHTML() {
+  document.getElementById("power").innerHTML = power;
+  document.getElementById("armor").innerHTML = armor;
   document.getElementById("layer").innerHTML = layer;
   document.getElementById("zone").innerHTML = zone;
   document.getElementById("num_foes").innerHTML = foes.length;
@@ -23,7 +25,7 @@ function updateFoeHTML() {
   for(let i = 0; i < foes.length; i++) {
     let foe_div = document.createElement("div");
     foe_div.classList.add("foe");
-    foe_div.innerHTML = "[" + i + "] " + foes[i].name + " " + foes[i].hp + "hp";
+    foe_div.innerHTML = "[" + i + "] " + foes[i].name + " " + foes[i].hp + "hp " + foes[i].armor + "%armor";
     foes_div.appendChild(foe_div);
   }
   document.getElementById("foes").replaceWith(foes_div);
@@ -34,11 +36,17 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+function attack_power(power, foe_armor) {
+  final_power = power * (getRandomInt(10) + 10);
+  final_power *= 1 - (foe_armor / 100);
+  return Math.floor(final_power);
+}
+
 function attack_random(foes) {
-  let attack_strength = getRandomInt(10) + 10;
   let foe_i = getRandomInt(foes.length);
   let foe = foes[foe_i]
-  foe.hp -= attack_strength;
+  let damage = attack_power(power, foe.armor);
+  foe.hp -= damage;
   if(foe.hp <= 0) {
     coins += 1;
     foes.splice(foe_i, 1);
@@ -53,6 +61,8 @@ setInterval(() => {
 let layer = 1;
 let zone = 'A';
 let coins = 0;
+let armor = 0;
+let power = 1;
 
 let foes = []
 let layer_1_foes = []
@@ -63,7 +73,8 @@ function setUpLayer1Foes() {
   for(let i = 0; i < 5; i++) {
     layer_1_foes.push({
       name: "Goblin",
-      hp: 100
+      hp: 100,
+      armor: 0
     })
   }
 }
@@ -72,13 +83,15 @@ function setUpLayer2Foes() {
   for(let i = 0; i < 8; i++) {
     layer_2_foes.push({
       name: "Goblin",
-      hp: 100
+      hp: 100,
+      armor: 0
     })
   }
   for(let i = 0; i < 2; i++) {
     layer_2_foes.push({
       name: "Supergoblin",
-      hp: 500
+      hp: 500,
+      armor: 0
     })
   }
 }
@@ -87,18 +100,21 @@ function setUpLayer3Foes() {
   for(let i = 0; i < 10; i++) {
     layer_3_foes.push({
       name: "Goblin",
-      hp: 100
+      hp: 100,
+      armor: 0
     })
   }
   for(let i = 0; i < 3; i++) {
     layer_3_foes.push({
       name: "Supergoblin",
-      hp: 500
+      hp: 500,
+      armor: 0
     })
   }
   layer_3_foes.push({
     name: "Void Wyrm Zephyr",
-    hp: 1_000_000
+    hp: 100_000,
+    armor: 99
   })
 }
 
