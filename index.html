@@ -2,8 +2,10 @@
 <html>
   <head>
     <title>Crystals</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <h1>Crystals</h1>
     <div>
       Power: <span id="power"></span>
     </div>
@@ -19,12 +21,13 @@
     <div>
       Current zone: <span id="zone"></span>
     </div>
-    <div>
-      <button id="attack">
-        Attack random foe
+    <div id="abilities">
+      <button id="attack" class="ability has-tip">
+        ⚔️
+        <span class="tooltip">Attack a random foe.</span>
       </button>
     </div>
-    <div>
+    <div id="layers">
       <button id="go_layer_1">
         Go to layer 1
       </button>

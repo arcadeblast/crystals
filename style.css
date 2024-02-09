@@ -1,0 +1,35 @@
+body {
+    margin: 2em;
+    font-family: Courier;
+}
+
+button {
+    margin: 1em;
+}
+
+#abilities {
+    background-color: rgb(228, 228, 228);
+}
+
+.ability {
+    padding: 1em;
+}
+
+#layers {
+    background-color: rgb(148, 148, 148);
+}
+
+
+.tooltip {
+    visibility: hidden;
+    width: 10em;
+    background-color: rgb(180, 180, 180);
+    padding: 0.5em 0;
+    position: absolute;
+    z-index: 1;
+    border-radius: 6px;
+}
+
+.has-tip:hover .tooltip {
+    visibility: visible;
+}
