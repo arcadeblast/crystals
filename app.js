@@ -53,6 +53,22 @@ function attack_random(foes) {
   }
 }
 
+function assassinate(foes) {
+  let foe_i = 0;
+  for(let i = 1; i < foes.length; i++) {
+    if(foes[i].hp < foes[foe_i].hp) {
+      foe_i = i;
+    }
+  }
+  let foe = foes[foe_i];
+  let damage = attack_power(power, foe.armor);
+  foe.hp -= damage;
+  if(foe.hp <= 0) {
+    coins += 1;
+    foes.splice(foe_i, 1);
+  }
+}
+
 setInterval(() => {
   updateHTML();
   updateState();
@@ -126,6 +142,11 @@ foes = layer_1_foes;
 attack_button = document.getElementById("attack");
 attack_button.addEventListener('click', ()=> {
   attack_random(foes);
+})
+
+assassinate_button = document.getElementById("assassinate");
+assassinate_button.addEventListener('click', ()=> {
+  assassinate(foes);
 })
 
 go_layer_1_button = document.getElementById("go_layer_1");

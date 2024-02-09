@@ -19,6 +19,9 @@ button {
     background-color: rgb(148, 148, 148);
 }
 
+.has-tip {
+    position: relative;
+}
 
 .tooltip {
     visibility: hidden;
@@ -26,10 +29,16 @@ button {
     background-color: rgb(180, 180, 180);
     padding: 0.5em 0;
     position: absolute;
+    top: -3em;
+    left: 2em;
     z-index: 1;
     border-radius: 6px;
 }
 
 .has-tip:hover .tooltip {
     visibility: visible;
+}
+
+.tooltip-header {
+    font-weight: bold;
 }
