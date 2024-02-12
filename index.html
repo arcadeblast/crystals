@@ -43,11 +43,23 @@
           🗡️
           <div class="tooltip">
             <div class="tooltip-header">Assassinate</div>
-            <div class ="tooltip-description">Attack the lowest HP foe on the battlefield.</div>
+            <div class ="tooltip-description">Attack the lowest HP foe. Cooldown is reset if they die.</div>
           </div>
         </button>
         <div class="bar">
           <div class="assassinate-cd bar-inner"></div>
+        </div>
+      </div>
+      <div class="ability">
+        <button id="reprisal" class="ability-button has-tip">
+          🤺
+          <div class="tooltip">
+            <div class="tooltip-header">Reprisal</div>
+            <div class ="tooltip-description">Attack the last foe you attacked. They cannot go below 1hp.</div>
+          </div>
+        </button>
+        <div class="bar">
+          <div class="reprisal-cd bar-inner"></div>
         </div>
       </div>
     </div>

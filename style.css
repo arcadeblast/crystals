@@ -28,16 +28,16 @@ button {
 }
 
 .has-tip {
-    position: relative;
+    /* position: relative; */
 }
 
 .tooltip {
     visibility: hidden;
-    width: 10em;
+    width: 15em;
     background-color: rgb(180, 180, 180);
     padding: 0.5em 0;
     position: absolute;
-    top: -3em;
+    bottom: 2em;/*-3em;*/
     left: 2em;
     z-index: 1;
     border-radius: 6px;

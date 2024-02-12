@@ -15,6 +15,9 @@ function updateState() {
   if(assassinateCooldown > 0) {
     assassinateCooldown -= 1;
   }
+  if(reprisalCooldown > 0) {
+    reprisalCooldown -= 1;
+  }
 }
 
 function updateHTML() {
@@ -26,6 +29,7 @@ function updateHTML() {
   document.getElementById("coins").innerHTML = coins;
   document.getElementsByClassName("wild-strike-cd")[0].style.width = "calc(" + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + "% - 2px)";
   document.getElementsByClassName("assassinate-cd")[0].style.width = "calc(" + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + "% - 2px)";
+  document.getElementsByClassName("reprisal-cd")[0].style.width = "calc(" + reprisalCooldown * 100/ REPRISAL_BASE_CD + "% - 2px)";
   updateFoeHTML();
 }
 
@@ -57,6 +61,7 @@ function attack_random(foes) {
   let foe = foes[foe_i]
   let damage = attack_power(power, foe.armor);
   foe.hp -= damage;
+  recent_foe = foe;
   if(foe.hp <= 0) {
     coins += 1;
     foes.splice(foe_i, 1);
@@ -74,10 +79,21 @@ function assassinate(foes) {
   let foe = foes[foe_i];
   let damage = attack_power(power, foe.armor);
   foe.hp -= damage;
+  recent_foe = foe;
   if(foe.hp <= 0) {
     coins += 1;
     foes.splice(foe_i, 1);
     assassinateCooldown = 0;
+  }
+}
+
+function reprisal(foe) {
+  reprisalCooldown = REPRISAL_BASE_CD;
+  let damage = attack_power(power, foe.armor);
+  foe.hp -= damage;
+  recent_foe = foe;
+  if(foe.hp <= 0) {
+    foe.hp = 1;
   }
 }
 
@@ -86,8 +102,9 @@ setInterval(() => {
   updateState();
 }, 1);
 
-const WILD_STRIKE_BASE_CD = 500;
+const WILD_STRIKE_BASE_CD = 200;
 const ASSASSINATE_BASE_CD = 500;
+const REPRISAL_BASE_CD = 350;
 
 let layer = 1;
 let zone = 'A';
@@ -97,6 +114,7 @@ let power = 1;
 
 let wildStrikeCooldown = 0;
 let assassinateCooldown = 0;
+let reprisalCooldown = 0;
 
 let foes = []
 let layer_1_foes = []
@@ -168,6 +186,13 @@ assassinate_button = document.getElementById("assassinate");
 assassinate_button.addEventListener('click', ()=> {
   if(assassinateCooldown <= 0) {
     assassinate(foes);
+  }
+})
+
+reprisal_button = document.getElementById("reprisal");
+reprisal_button.addEventListener('click', ()=> {
+  if(reprisalCooldown <= 0) {
+    reprisal(recent_foe);
   }
 })
 
