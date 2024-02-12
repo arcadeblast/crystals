@@ -9,10 +9,18 @@ button {
 
 #abilities {
     background-color: rgb(228, 228, 228);
+    display: flex;
+    padding: 1em;
 }
 
 .ability {
     padding: 1em;
+}
+
+.ability-button {
+    padding: 1em;
+    margin: auto;
+    display: block;
 }
 
 #layers {
@@ -41,4 +49,21 @@ button {
 
 .tooltip-header {
     font-weight: bold;
+}
+
+.bar-inner {
+    background-color: rgb(255, 0, 0);
+    position: relative;
+    top: 1px;
+    left: 1px;
+    height: calc(100% - 2px);
+    margin-top: 1em;
+}
+
+.bar {
+    background-color: rgb(0, 0, 0);
+    height: 0.5em;
+    width: 5em;
+    margin-top: 1em;
+    z-index: 100;
 }

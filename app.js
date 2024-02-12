@@ -8,6 +8,13 @@ function updateState() {
   else {
     foes = layer_3_foes;
   }
+
+  if(wildStrikeCooldown > 0) {
+    wildStrikeCooldown -= 1;
+  }
+  if(assassinateCooldown > 0) {
+    assassinateCooldown -= 1;
+  }
 }
 
 function updateHTML() {
@@ -17,6 +24,8 @@ function updateHTML() {
   document.getElementById("zone").innerHTML = zone;
   document.getElementById("num_foes").innerHTML = foes.length;
   document.getElementById("coins").innerHTML = coins;
+  document.getElementsByClassName("wild-strike-cd")[0].style.width = "calc(" + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + "% - 2px)";
+  document.getElementsByClassName("assassinate-cd")[0].style.width = "calc(" + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + "% - 2px)";
   updateFoeHTML();
 }
 
@@ -43,6 +52,7 @@ function attack_power(power, foe_armor) {
 }
 
 function attack_random(foes) {
+  wildStrikeCooldown = WILD_STRIKE_BASE_CD;
   let foe_i = getRandomInt(foes.length);
   let foe = foes[foe_i]
   let damage = attack_power(power, foe.armor);
@@ -54,6 +64,7 @@ function attack_random(foes) {
 }
 
 function assassinate(foes) {
+  assassinateCooldown = ASSASSINATE_BASE_CD;
   let foe_i = 0;
   for(let i = 1; i < foes.length; i++) {
     if(foes[i].hp < foes[foe_i].hp) {
@@ -66,6 +77,7 @@ function assassinate(foes) {
   if(foe.hp <= 0) {
     coins += 1;
     foes.splice(foe_i, 1);
+    assassinateCooldown = 0;
   }
 }
 
@@ -74,11 +86,17 @@ setInterval(() => {
   updateState();
 }, 1);
 
+const WILD_STRIKE_BASE_CD = 500;
+const ASSASSINATE_BASE_CD = 500;
+
 let layer = 1;
 let zone = 'A';
 let coins = 0;
 let armor = 0;
 let power = 1;
+
+let wildStrikeCooldown = 0;
+let assassinateCooldown = 0;
 
 let foes = []
 let layer_1_foes = []
@@ -107,7 +125,7 @@ function setUpLayer2Foes() {
     layer_2_foes.push({
       name: "Supergoblin",
       hp: 500,
-      armor: 0
+      armor: 5
     })
   }
 }
@@ -124,13 +142,13 @@ function setUpLayer3Foes() {
     layer_3_foes.push({
       name: "Supergoblin",
       hp: 500,
-      armor: 0
+      armor: 5
     })
   }
   layer_3_foes.push({
     name: "Void Wyrm Zephyr",
-    hp: 100_000,
-    armor: 99
+    hp: 1000,
+    armor: 10
   })
 }
 
@@ -141,12 +159,16 @@ foes = layer_1_foes;
 
 attack_button = document.getElementById("attack");
 attack_button.addEventListener('click', ()=> {
-  attack_random(foes);
+  if(wildStrikeCooldown <= 0) {
+    attack_random(foes);
+  }
 })
 
 assassinate_button = document.getElementById("assassinate");
 assassinate_button.addEventListener('click', ()=> {
-  assassinate(foes);
+  if(assassinateCooldown <= 0) {
+    assassinate(foes);
+  }
 })
 
 go_layer_1_button = document.getElementById("go_layer_1");

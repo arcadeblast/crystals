@@ -22,20 +22,34 @@
       Current zone: <span id="zone"></span>
     </div>
     <div id="abilities">
-      <button id="attack" class="ability has-tip">
-        ⚔️
-        <div class="tooltip">
-          <div class="tooltip-header">Wild Strike</div>
-          <div class ="tooltip-description">Attack a random foe on the battlefield.</div>
+      <div class="ability">
+        <button id="attack" class="ability-button has-tip">
+          ⚔️
+          <div class="tooltip">
+            <div class="tooltip-header">
+              Wild Strike
+            </div>
+            <div class ="tooltip-description">
+              Attack a random foe on the battlefield.
+            </div>
+          </div>
+        </button>
+        <div class="bar">
+          <div class="wild-strike-cd bar-inner"></div>
         </div>
-      </button>
-      <button id="assassinate" class="ability has-tip">
-        🗡️
-        <div class="tooltip">
-          <div class="tooltip-header">Assassinate</div>
-          <div class ="tooltip-description">Attack the lowest HP foe on the battlefield.</div>
+      </div>
+      <div class="ability">
+        <button id="assassinate" class="ability-button has-tip">
+          🗡️
+          <div class="tooltip">
+            <div class="tooltip-header">Assassinate</div>
+            <div class ="tooltip-description">Attack the lowest HP foe on the battlefield.</div>
+          </div>
+        </button>
+        <div class="bar">
+          <div class="assassinate-cd bar-inner"></div>
         </div>
-      </button>
+      </div>
     </div>
     <div id="layers">
       <button id="go_layer_1" class="has-tip">
