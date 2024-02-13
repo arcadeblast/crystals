@@ -18,11 +18,13 @@ function updateState() {
   if(reprisalCooldown > 0) {
     reprisalCooldown -= 1;
   }
+  attack_power = weapon.attack_power;
+  armor_piercing = weapon.armor_piercing;
 }
 
 function updateHTML() {
-  document.getElementById("power").innerHTML = power;
-  document.getElementById("armor").innerHTML = armor;
+  document.getElementById("attack-power").innerHTML = attack_power;
+  document.getElementById("armor-piercing").innerHTML = armor_piercing;
   document.getElementById("layer").innerHTML = layer;
   document.getElementById("zone").innerHTML = zone;
   document.getElementById("num_foes").innerHTML = foes.length;
@@ -30,7 +32,9 @@ function updateHTML() {
   document.getElementsByClassName("wild-strike-cd")[0].style.width = "calc(" + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + "% - 2px)";
   document.getElementsByClassName("assassinate-cd")[0].style.width = "calc(" + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + "% - 2px)";
   document.getElementsByClassName("reprisal-cd")[0].style.width = "calc(" + reprisalCooldown * 100/ REPRISAL_BASE_CD + "% - 2px)";
+  updateEquipmentHTML(weapon);
   updateFoeHTML();
+  updateLootHTML();
 }
 
 function updateFoeHTML() {
@@ -45,21 +49,40 @@ function updateFoeHTML() {
   foes_div.id = "foes";
 }
 
+function updateLootHTML() {
+  let loot_div = document.createElement("div");
+  for(let i = 0; i < loot.length; i++) {
+    let loot_item_div = document.createElement("div");
+    loot_item_div.classList.add("loot_item");
+    loot_item_div.innerHTML = "[" + i + "] " + loot[i].weapon + ", " + loot[i].attack_power + " attack power, " + loot[i].armor_piercing + " armor piercing";
+    loot_div.appendChild(loot_item_div);
+  }
+  document.getElementById("loot").replaceWith(loot_div);
+  loot_div.id = "loot";
+}
+
+function updateEquipmentHTML(weapon) {
+  weapon_div = document.getElementById("weapon");
+  weapon_div.classList.add(weapon.weapon);
+  weapon_div.innerHTML = "Current: " + weapon.weapon + ", " + weapon.attack_power + " attack power, " + weapon.armor_piercing + " armor piercing";
+
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function attack_power(power, foe_armor) {
-  final_power = power * (getRandomInt(10) + 10);
+function calculateDamage(attack_power, foe_armor) {
+  final_power = attack_power + getRandomInt(attack_power) / 2;
   final_power *= 1 - (foe_armor / 100);
   return Math.floor(final_power);
 }
 
-function attack_random(foes) {
+function attack_random(foes, attack_power) {
   wildStrikeCooldown = WILD_STRIKE_BASE_CD;
   let foe_i = getRandomInt(foes.length);
   let foe = foes[foe_i]
-  let damage = attack_power(power, foe.armor);
+  let damage = calculateDamage(attack_power, foe.armor);
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
@@ -68,7 +91,7 @@ function attack_random(foes) {
   }
 }
 
-function assassinate(foes) {
+function assassinate(foes, attack_power) {
   assassinateCooldown = ASSASSINATE_BASE_CD;
   let foe_i = 0;
   for(let i = 1; i < foes.length; i++) {
@@ -77,7 +100,7 @@ function assassinate(foes) {
     }
   }
   let foe = foes[foe_i];
-  let damage = attack_power(power, foe.armor);
+  let damage = calculateDamage(attack_power, foe.armor);
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
@@ -87,9 +110,9 @@ function assassinate(foes) {
   }
 }
 
-function reprisal(foe) {
+function reprisal(foe, attack_power) {
   reprisalCooldown = REPRISAL_BASE_CD;
-  let damage = attack_power(power, foe.armor);
+  let damage = calculateDamage(attack_power, foe.armor);
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
@@ -109,22 +132,42 @@ const REPRISAL_BASE_CD = 350;
 let layer = 1;
 let zone = 'A';
 let coins = 0;
-let armor = 0;
-let power = 1;
+let armor_piercing = 0;
+let attack_power = 1;
 
 let wildStrikeCooldown = 0;
 let assassinateCooldown = 0;
 let reprisalCooldown = 0;
 
-let foes = []
-let layer_1_foes = []
-let layer_2_foes = []
-let layer_3_foes = []
+let foes = [];
+let layer_1_foes = [];
+let layer_2_foes = [];
+let layer_3_foes = [];
+
+let weapon = {
+  weapon: 'dagger',
+  attack_power: 9,
+  armor_piercing: 1
+}
+
+let loot = [];
+loot.push (
+  {
+    weapon: 'dagger',
+    attack_power: 9,
+    armor_piercing: 1
+  },
+  {
+    weapon: 'battleaxe',
+    attack_power: 5,
+    armor_piercing: 5
+  }
+)
 
 function setUpLayer1Foes() {
   for(let i = 0; i < 5; i++) {
     layer_1_foes.push({
-      name: "Goblin",
+      name: "Drake",
       hp: 100,
       armor: 0
     })
@@ -134,14 +177,14 @@ function setUpLayer1Foes() {
 function setUpLayer2Foes() {
   for(let i = 0; i < 8; i++) {
     layer_2_foes.push({
-      name: "Goblin",
+      name: "Drake",
       hp: 100,
       armor: 0
     })
   }
   for(let i = 0; i < 2; i++) {
     layer_2_foes.push({
-      name: "Supergoblin",
+      name: "Serpent",
       hp: 500,
       armor: 5
     })
@@ -151,14 +194,14 @@ function setUpLayer2Foes() {
 function setUpLayer3Foes() {
   for(let i = 0; i < 10; i++) {
     layer_3_foes.push({
-      name: "Goblin",
+      name: "Drake",
       hp: 100,
       armor: 0
     })
   }
   for(let i = 0; i < 3; i++) {
     layer_3_foes.push({
-      name: "Supergoblin",
+      name: "Serpent",
       hp: 500,
       armor: 5
     })
@@ -178,21 +221,21 @@ foes = layer_1_foes;
 attack_button = document.getElementById("attack");
 attack_button.addEventListener('click', ()=> {
   if(wildStrikeCooldown <= 0) {
-    attack_random(foes);
+    attack_random(foes, attack_power);
   }
 })
 
 assassinate_button = document.getElementById("assassinate");
 assassinate_button.addEventListener('click', ()=> {
   if(assassinateCooldown <= 0) {
-    assassinate(foes);
+    assassinate(foes, attack_power);
   }
 })
 
 reprisal_button = document.getElementById("reprisal");
 reprisal_button.addEventListener('click', ()=> {
   if(reprisalCooldown <= 0) {
-    reprisal(recent_foe);
+    reprisal(recent_foe, attack_power);
   }
 })
 

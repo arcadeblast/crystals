@@ -23,12 +23,28 @@ button {
     display: block;
 }
 
+#roles {
+    background-color: rgb(54, 54, 54);
+}
+
+/* .role {
+    padding: 1em;
+} */
+
+.role-button {
+    padding: 1em;
+}
+
 #layers {
     background-color: rgb(148, 148, 148);
 }
 
-.has-tip {
-    /* position: relative; */
+#loot {
+    background-color: rgb(195, 216, 147);
+}
+
+#equipment {
+    background-color: rgb(118, 172, 185);
 }
 
 .tooltip {
@@ -37,7 +53,7 @@ button {
     background-color: rgb(180, 180, 180);
     padding: 0.5em 0;
     position: absolute;
-    bottom: 2em;/*-3em;*/
+    bottom: 2em;
     left: 2em;
     z-index: 1;
     border-radius: 6px;

@@ -7,10 +7,10 @@
   <body>
     <h1>Crystals</h1>
     <div>
-      Power: <span id="power"></span>
+      Attack Power: <span id="attack-power"></span>
     </div>
     <div>
-      Armor: <span id="armor"></span>
+      Armor Piercing: <span id="armor-piercing"></span>
     </div>
     <div>
       Coins: <span id="coins"></span>
@@ -20,6 +20,31 @@
     </div>
     <div>
       Current zone: <span id="zone"></span>
+    </div>
+    <div id="roles">
+      <div class="role">
+        <button id="shadowblade" class="role-button has-tip">
+          🥷
+          <div class="tooltip">
+            <div class="tooltip-header">Shadowblade</div>
+            <div class ="tooltip-description">Uses speed and trickery to assassinate foes efficiently.</div>
+          </div>
+        </button>
+        <button disabled id="dragonslayer" class="role-button has-tip">
+          🐲
+          <div class="tooltip">
+            <div class="tooltip-header">(Locked) Dragonslayer</div>
+            <div class ="tooltip-description">Uses massive weapons and insane strength to fell the most colossal foes.</div>
+          </div>
+        </button>
+        <button disabled id="crusader" class="role-button has-tip">
+          🌄
+          <div class="tooltip">
+            <div class="tooltip-header">(Locked) Crusader</div>
+            <div class ="tooltip-description">Enacts the righteous will of the gods to shepherd the sinful into the afterlife.</div>
+          </div>
+        </button>
+      </div>
     </div>
     <div id="abilities">
       <div class="ability">
@@ -76,6 +101,14 @@
         3
         <div class="tooltip">Go to layer 3.</div>
       </button>
+    </div>
+    <div id="loot">
+      loot
+    </div>
+    <div id="equipment">
+      <div id="weapon">
+        
+      </div>
     </div>
     <div>
       Foes in this zone: <span id="num_foes"></span>
