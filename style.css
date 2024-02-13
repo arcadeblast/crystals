@@ -41,6 +41,14 @@ button {
 
 #loot {
     background-color: rgb(195, 216, 147);
+    display: flex;
+}
+
+.loot-item {
+    margin: 0.5em;
+    background-color: blueviolet;
+    padding: 1em;
+    user-select: none;
 }
 
 #equipment {

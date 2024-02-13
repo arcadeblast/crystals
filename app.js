@@ -52,13 +52,43 @@ function updateFoeHTML() {
 function updateLootHTML() {
   let loot_div = document.createElement("div");
   for(let i = 0; i < loot.length; i++) {
-    let loot_item_div = document.createElement("div");
-    loot_item_div.classList.add("loot_item");
-    loot_item_div.innerHTML = "[" + i + "] " + loot[i].weapon + ", " + loot[i].attack_power + " attack power, " + loot[i].armor_piercing + " armor piercing";
+    let loot_item_div = createLootElement(loot[i]);
     loot_div.appendChild(loot_item_div);
   }
   document.getElementById("loot").replaceWith(loot_div);
   loot_div.id = "loot";
+}
+
+function createLootElement(item) {
+  item_div = document.createElement("div");
+  item_div.classList.add("loot-item");
+  item_div.classList.add("has-tip");
+  if(item.weapon == "dagger")
+  {
+    item_div.innerHTML = "🗡️";
+  } else if(item.weapon == "longsword") {
+    item_div.innerHTML = "⚔️";
+  } else if(item.weapon == "battleaxe") {
+    item_div.innerHTML = "🪓";
+  }
+  item_div.appendChild(createTip(item.weapon, item.attack_power + " attack power, " + item.armor_piercing + " armor piercing"));
+  return item_div;
+}
+
+function createTip(header, description) {
+  tip_div = document.createElement("div");
+  tip_div.classList.add("tooltip");
+  tip_header_div = document.createElement("div");
+  tip_header_div.classList.add("tooltip-header");
+  tip_header_div.innerHTML = header;
+  tip_description_div = document.createElement("div");
+  tip_description_div.classList.add("tooltip-description");
+  tip_description_div.innerHTML = description;
+
+  tip_div.appendChild(tip_header_div);
+  tip_div.appendChild(tip_description_div);
+
+  return tip_div;
 }
 
 function updateEquipmentHTML(weapon) {
