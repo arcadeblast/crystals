@@ -32,9 +32,9 @@ function updateHTML() {
   document.getElementsByClassName("wild-strike-cd")[0].style.width = "calc(" + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + "% - 2px)";
   document.getElementsByClassName("assassinate-cd")[0].style.width = "calc(" + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + "% - 2px)";
   document.getElementsByClassName("reprisal-cd")[0].style.width = "calc(" + reprisalCooldown * 100/ REPRISAL_BASE_CD + "% - 2px)";
-  updateEquipmentHTML(weapon);
+  updateEquippedHTML(weapon);
   updateFoeHTML();
-  updateLootHTML();
+  // updateLootHTML();
 }
 
 function updateFoeHTML() {
@@ -50,19 +50,19 @@ function updateFoeHTML() {
 }
 
 function updateLootHTML() {
-  let loot_div = document.createElement("div");
+  let loot_div = document.getElementById("loot");
+  loot_div.replaceChildren();
   for(let i = 0; i < loot.length; i++) {
     let loot_item_div = createLootElement(loot[i]);
     loot_div.appendChild(loot_item_div);
   }
-  document.getElementById("loot").replaceWith(loot_div);
-  loot_div.id = "loot";
 }
 
-function createLootElement(item) {
+function createItemIcon(item) {
   item_div = document.createElement("div");
   item_div.classList.add("loot-item");
   item_div.classList.add("has-tip");
+  item_div.classList.add(item.forge);
   if(item.weapon == "dagger")
   {
     item_div.innerHTML = "🗡️";
@@ -72,6 +72,48 @@ function createLootElement(item) {
     item_div.innerHTML = "🪓";
   }
   item_div.appendChild(createTip(item.weapon, item.attack_power + " attack power, " + item.armor_piercing + " armor piercing"));
+  return item_div;
+}
+
+function createLootElement(item) {
+  let item_div = document.createElement("div");
+  let item_icon = createItemIcon(item);
+  let equip_button = document.createElement("button");
+  equip_button.innerHTML = "Equip";
+  equip_button.classList.add('equip');
+  equip_button.setAttribute('guid', item.guid);
+  item_div.appendChild(item_icon);
+  item_div.appendChild(equip_button);
+  return item_div;
+}
+
+function removeFromLoot(item_guid) {
+  for(let i = 0; i < loot.length; i++) {
+    if(loot[i].guid == item_guid) {
+      loot.splice(i, 1);
+      break;
+    }
+  }
+}
+
+function equip(item_guid) {
+  let item_to_equip = null;
+  for(let i = 0; i < loot.length; i++) {
+    if(loot[i].guid == item_guid) {
+      item_to_equip = loot[i];
+      break;
+    }
+  }
+  loot.push(weapon);
+  weapon = item_to_equip;
+  removeFromLoot(item_to_equip.guid);
+  updateLootHTML();
+}
+
+function createEquippedItemElement(item) {
+  let item_div = document.createElement("div");
+  let item_icon = createItemIcon(item);
+  item_div.appendChild(item_icon);
   return item_div;
 }
 
@@ -91,11 +133,10 @@ function createTip(header, description) {
   return tip_div;
 }
 
-function updateEquipmentHTML(weapon) {
-  weapon_div = document.getElementById("weapon");
+function updateEquippedHTML(weapon) {
+  let weapon_div = document.getElementById("weapon");
+  weapon_div.replaceChildren(createEquippedItemElement(weapon));
   weapon_div.classList.add(weapon.weapon);
-  weapon_div.innerHTML = "Current: " + weapon.weapon + ", " + weapon.attack_power + " attack power, " + weapon.armor_piercing + " armor piercing";
-
 }
 
 function getRandomInt(max) {
@@ -175,9 +216,11 @@ let layer_2_foes = [];
 let layer_3_foes = [];
 
 let weapon = {
-  weapon: 'dagger',
+  weapon: 'longsword',
   attack_power: 9,
-  armor_piercing: 1
+  armor_piercing: 1,
+  forge: 'diamond',
+  guid: 'blahsdas'
 }
 
 let loot = [];
@@ -185,12 +228,16 @@ loot.push (
   {
     weapon: 'dagger',
     attack_power: 9,
-    armor_piercing: 1
+    armor_piercing: 1,
+    forge: 'cosmic',
+    guid: 'testguid'
   },
   {
     weapon: 'battleaxe',
     attack_power: 5,
-    armor_piercing: 5
+    armor_piercing: 5,
+    forge: 'gilded',
+    guid: 'afsdfsdfsdasfas'
   }
 )
 
@@ -248,38 +295,47 @@ setUpLayer2Foes();
 setUpLayer3Foes();
 foes = layer_1_foes;
 
+updateLootHTML();
+
 attack_button = document.getElementById("attack");
 attack_button.addEventListener('click', ()=> {
   if(wildStrikeCooldown <= 0) {
     attack_random(foes, attack_power);
   }
-})
+});
 
 assassinate_button = document.getElementById("assassinate");
 assassinate_button.addEventListener('click', ()=> {
   if(assassinateCooldown <= 0) {
     assassinate(foes, attack_power);
   }
-})
+});
 
 reprisal_button = document.getElementById("reprisal");
 reprisal_button.addEventListener('click', ()=> {
   if(reprisalCooldown <= 0) {
     reprisal(recent_foe, attack_power);
   }
-})
+});
 
 go_layer_1_button = document.getElementById("go_layer_1");
 go_layer_1_button.addEventListener('click', ()=> {
   layer = 1;
-})
+});
 
 go_layer_2_button = document.getElementById("go_layer_2");
 go_layer_2_button.addEventListener('click', ()=> {
   layer = 2;
-})
+});
 
 go_layer_3_button = document.getElementById("go_layer_3");
 go_layer_3_button.addEventListener('click', ()=> {
   layer = 3;
-})
+});
+
+loot_div = document.getElementById("loot");
+loot_div.addEventListener('click', function(e) {
+  if(e.target.classList.contains('equip')) {
+    equip(e.target.getAttribute('guid'));
+  }
+});
