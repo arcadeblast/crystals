@@ -1,14 +1,4 @@
 function updateState() {
-  if(layer == 1) {
-    foes = layer_1_foes;
-  }
-  else if(layer == 2) {
-    foes = layer_2_foes;
-  }
-  else {
-    foes = layer_3_foes;
-  }
-
   if(wildStrikeCooldown > 0) {
     wildStrikeCooldown -= 1;
   }
@@ -23,34 +13,46 @@ function updateState() {
 }
 
 function updateHTML() {
-  document.getElementById("attack-power").innerHTML = attack_power;
-  document.getElementById("armor-piercing").innerHTML = armor_piercing;
-  document.getElementById("layer").innerHTML = layer;
-  document.getElementById("zone").innerHTML = zone;
-  document.getElementById("num_foes").innerHTML = foes.length;
-  document.getElementById("coins").innerHTML = coins;
-  document.getElementsByClassName("wild-strike-cd")[0].style.width = "calc(" + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + "% - 2px)";
-  document.getElementsByClassName("assassinate-cd")[0].style.width = "calc(" + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + "% - 2px)";
-  document.getElementsByClassName("reprisal-cd")[0].style.width = "calc(" + reprisalCooldown * 100/ REPRISAL_BASE_CD + "% - 2px)";
+  document.getElementById('role').innerHTML = role;
+  document.getElementById('attack-power').innerHTML = attack_power;
+  document.getElementById('spellbreak').innerHTML = spellbreak;
+  document.getElementById('armor-piercing').innerHTML = armor_piercing;
+  document.getElementsByClassName('wild-strike-cd')[0].style.width = 'calc(' + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + '% - 2px)';
+  document.getElementsByClassName('assassinate-cd')[0].style.width = 'calc(' + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + '% - 2px)';
+  document.getElementsByClassName('reprisal-cd')[0].style.width = 'calc(' + reprisalCooldown * 100/ REPRISAL_BASE_CD + '% - 2px)';
   updateEquippedHTML(weapon);
-  updateFoeHTML();
-  // updateLootHTML();
 }
 
 function updateFoeHTML() {
-  let foes_div = document.createElement("div");
+  let foes_div = document.getElementById('foes-list');
+  foes_div.replaceChildren();
   for(let i = 0; i < foes.length; i++) {
-    let foe_div = document.createElement("div");
-    foe_div.classList.add("foe");
-    foe_div.innerHTML = "[" + i + "] " + foes[i].name + " " + foes[i].hp + "hp " + foes[i].armor + "%armor";
+    let foe_div = createFoe(foes[i].hp, foes[i].max_hp);
     foes_div.appendChild(foe_div);
   }
-  document.getElementById("foes").replaceWith(foes_div);
-  foes_div.id = "foes";
+}
+
+function createFoe(hp, max_hp) {
+  let foe_div = document.createElement('div');
+  foe_div.classList.add('foe');
+  foe_div.innerHTML = '👺';
+  let hp_bar = createBar(hp, max_hp);
+  foe_div.appendChild(hp_bar);
+  return foe_div;
+}
+
+function createBar(actual, max) {
+  bar = document.createElement('div');
+  bar.classList.add('bar');
+  innerBar = document.createElement('div');
+  innerBar.classList.add('bar-inner');
+  innerBar.style.width = 'calc(' + actual * 100 / max + '% - 2px)';
+  bar.appendChild(innerBar);
+  return bar;
 }
 
 function updateLootHTML() {
-  let loot_div = document.getElementById("loot");
+  let loot_div = document.getElementById('loot-list');
   loot_div.replaceChildren();
   for(let i = 0; i < loot.length; i++) {
     let loot_item_div = createLootElement(loot[i]);
@@ -58,28 +60,34 @@ function updateLootHTML() {
   }
 }
 
+function createPlayerCard() {
+  let player_card_div = document.getElementById('div');
+  player_card_div.id = 'player-card';
+  return player_card_div;
+}
+
 function createItemIcon(item) {
-  item_div = document.createElement("div");
-  item_div.classList.add("loot-item");
-  item_div.classList.add("has-tip");
+  item_div = document.createElement('div');
+  item_div.classList.add('loot-item');
+  item_div.classList.add('has-tip');
   item_div.classList.add(item.forge);
-  if(item.weapon == "dagger")
+  if(item.weapon == 'dagger')
   {
-    item_div.innerHTML = "🗡️";
-  } else if(item.weapon == "longsword") {
-    item_div.innerHTML = "⚔️";
-  } else if(item.weapon == "battleaxe") {
-    item_div.innerHTML = "🪓";
+    item_div.innerHTML = '🗡️';
+  } else if(item.weapon == 'longsword') {
+    item_div.innerHTML = '⚔️';
+  } else if(item.weapon == 'battleaxe') {
+    item_div.innerHTML = '🪓';
   }
-  item_div.appendChild(createTip(item.weapon, item.attack_power + " attack power, " + item.armor_piercing + " armor piercing"));
+  item_div.appendChild(createTip(item.forge + ' ' + item.weapon, item.attack_power + ' attack power, ' + item.armor_piercing + ' armor piercing'));
   return item_div;
 }
 
 function createLootElement(item) {
-  let item_div = document.createElement("div");
+  let item_div = document.createElement('div');
   let item_icon = createItemIcon(item);
-  let equip_button = document.createElement("button");
-  equip_button.innerHTML = "Equip";
+  let equip_button = document.createElement('button');
+  equip_button.innerHTML = 'Equip';
   equip_button.classList.add('equip');
   equip_button.setAttribute('guid', item.guid);
   item_div.appendChild(item_icon);
@@ -111,20 +119,20 @@ function equip(item_guid) {
 }
 
 function createEquippedItemElement(item) {
-  let item_div = document.createElement("div");
+  let item_div = document.createElement('div');
   let item_icon = createItemIcon(item);
   item_div.appendChild(item_icon);
   return item_div;
 }
 
 function createTip(header, description) {
-  tip_div = document.createElement("div");
-  tip_div.classList.add("tooltip");
-  tip_header_div = document.createElement("div");
-  tip_header_div.classList.add("tooltip-header");
+  tip_div = document.createElement('div');
+  tip_div.classList.add('tooltip');
+  tip_header_div = document.createElement('div');
+  tip_header_div.classList.add('tooltip-header');
   tip_header_div.innerHTML = header;
-  tip_description_div = document.createElement("div");
-  tip_description_div.classList.add("tooltip-description");
+  tip_description_div = document.createElement('div');
+  tip_description_div.classList.add('tooltip-description');
   tip_description_div.innerHTML = description;
 
   tip_div.appendChild(tip_header_div);
@@ -134,7 +142,7 @@ function createTip(header, description) {
 }
 
 function updateEquippedHTML(weapon) {
-  let weapon_div = document.getElementById("weapon");
+  let weapon_div = document.getElementById('weapon');
   weapon_div.replaceChildren(createEquippedItemElement(weapon));
   weapon_div.classList.add(weapon.weapon);
 }
@@ -157,7 +165,6 @@ function attack_random(foes, attack_power) {
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
-    coins += 1;
     foes.splice(foe_i, 1);
   }
 }
@@ -175,7 +182,6 @@ function assassinate(foes, attack_power) {
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
-    coins += 1;
     foes.splice(foe_i, 1);
     assassinateCooldown = 0;
   }
@@ -196,15 +202,15 @@ setInterval(() => {
   updateState();
 }, 1);
 
-const WILD_STRIKE_BASE_CD = 200;
-const ASSASSINATE_BASE_CD = 500;
-const REPRISAL_BASE_CD = 350;
+const WILD_STRIKE_BASE_CD = 250;
+const ASSASSINATE_BASE_CD = 1000;
+const REPRISAL_BASE_CD = 500;
 
 let layer = 1;
-let zone = 'A';
-let coins = 0;
 let armor_piercing = 0;
 let attack_power = 1;
+let spellbreak = 0;
+let role = 'Shadowblade';
 
 let wildStrikeCooldown = 0;
 let assassinateCooldown = 0;
@@ -244,8 +250,9 @@ loot.push (
 function setUpLayer1Foes() {
   for(let i = 0; i < 5; i++) {
     layer_1_foes.push({
-      name: "Drake",
+      name: 'Drake',
       hp: 100,
+      max_hp: 100,
       armor: 0
     })
   }
@@ -254,15 +261,17 @@ function setUpLayer1Foes() {
 function setUpLayer2Foes() {
   for(let i = 0; i < 8; i++) {
     layer_2_foes.push({
-      name: "Drake",
+      name: 'Drake',
       hp: 100,
+      max_hp: 100,
       armor: 0
     })
   }
   for(let i = 0; i < 2; i++) {
     layer_2_foes.push({
-      name: "Serpent",
+      name: 'Serpent',
       hp: 500,
+      max_hp: 500,
       armor: 5
     })
   }
@@ -271,21 +280,24 @@ function setUpLayer2Foes() {
 function setUpLayer3Foes() {
   for(let i = 0; i < 10; i++) {
     layer_3_foes.push({
-      name: "Drake",
+      name: 'Drake',
       hp: 100,
+      max_hp: 100,
       armor: 0
     })
   }
   for(let i = 0; i < 3; i++) {
     layer_3_foes.push({
-      name: "Serpent",
+      name: 'Serpent',
       hp: 500,
+      max_hp: 500,
       armor: 5
     })
   }
   layer_3_foes.push({
-    name: "Void Wyrm Zephyr",
+    name: 'Void Wyrm Zephyr',
     hp: 1000,
+    max_hp: 1000,
     armor: 10
   })
 }
@@ -296,44 +308,56 @@ setUpLayer3Foes();
 foes = layer_1_foes;
 
 updateLootHTML();
+updateFoeHTML();
 
-attack_button = document.getElementById("attack");
+ability_div = document.getElementById('abilities');
+ability_div.addEventListener('click', ()=> {
+  updateFoeHTML();
+});
+
+attack_button = document.getElementById('attack');
 attack_button.addEventListener('click', ()=> {
   if(wildStrikeCooldown <= 0) {
     attack_random(foes, attack_power);
   }
 });
 
-assassinate_button = document.getElementById("assassinate");
+assassinate_button = document.getElementById('assassinate');
 assassinate_button.addEventListener('click', ()=> {
   if(assassinateCooldown <= 0) {
     assassinate(foes, attack_power);
   }
 });
 
-reprisal_button = document.getElementById("reprisal");
+reprisal_button = document.getElementById('reprisal');
 reprisal_button.addEventListener('click', ()=> {
   if(reprisalCooldown <= 0) {
     reprisal(recent_foe, attack_power);
   }
 });
 
-go_layer_1_button = document.getElementById("go_layer_1");
+go_layer_1_button = document.getElementById('go_layer_1');
 go_layer_1_button.addEventListener('click', ()=> {
   layer = 1;
+  foes = layer_1_foes;
+  updateFoeHTML();
 });
 
-go_layer_2_button = document.getElementById("go_layer_2");
+go_layer_2_button = document.getElementById('go_layer_2');
 go_layer_2_button.addEventListener('click', ()=> {
   layer = 2;
+  foes = layer_2_foes;
+  updateFoeHTML();
 });
 
-go_layer_3_button = document.getElementById("go_layer_3");
+go_layer_3_button = document.getElementById('go_layer_3');
 go_layer_3_button.addEventListener('click', ()=> {
   layer = 3;
+  foes = layer_3_foes;
+  updateFoeHTML();
 });
 
-loot_div = document.getElementById("loot");
+loot_div = document.getElementById('loot');
 loot_div.addEventListener('click', function(e) {
   if(e.target.classList.contains('equip')) {
     equip(e.target.getAttribute('guid'));

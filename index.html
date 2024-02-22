@@ -6,22 +6,109 @@
   </head>
   <body>
     <h1>Crystals</h1>
-    <div>
-      Attack Power: <span id="attack-power"></span>
+    
+    <div id="foes" class="section">
+      <h2>
+        Foes
+      </h2>
+      <div id="foes-list">
+
+      </div>
+      <div id="layers">
+        <h3>Layer</h3>
+        <button id="go_layer_1" class="has-tip">
+          1
+          <div class="tooltip">Go to layer 1.</div>
+        </button>
+        <button id="go_layer_2" class="has-tip">
+          2
+          <div class="tooltip">Go to layer 2.</div>
+        </button>
+        <button id="go_layer_3" class="has-tip">
+          3
+          <div class="tooltip">Go to layer 3.</div>
+        </button>
+      </div>
     </div>
-    <div>
-      Armor Piercing: <span id="armor-piercing"></span>
+    <div id="player-card" class="section">
+      <h2>
+        Player
+      </h2>
+      <div>
+        Role: <span id='role'></span>
+      </div>
+      <div>
+        Attack Power: <span id="attack-power"></span>
+      </div>
+      <div>
+        Armor Piercing: <span id="armor-piercing"></span>
+      </div>
+      <div>
+        Spellbreak: <span id="spellbreak"></span>
+      </div>
+      <div id="abilities">
+        <h3>Abilities</h3>
+        <div id="abilities-list">
+          <div class="ability">
+            <button id="attack" class="ability-button has-tip">
+              ⚔️
+              <div class="tooltip">
+                <div class="tooltip-header">
+                  Wild Strike
+                </div>
+                <div class ="tooltip-description">
+                  Attack a random foe on the battlefield.
+                </div>
+              </div>
+            </button>
+            <div class="bar">
+              <div class="wild-strike-cd bar-inner"></div>
+            </div>
+          </div>
+          <div class="ability">
+            <button id="assassinate" class="ability-button has-tip">
+              🗡️
+              <div class="tooltip">
+                <div class="tooltip-header">Assassinate</div>
+                <div class ="tooltip-description">Attack the lowest HP foe. Cooldown is reset if they die.</div>
+              </div>
+            </button>
+            <div class="bar">
+              <div class="assassinate-cd bar-inner"></div>
+            </div>
+          </div>
+          <div class="ability">
+            <button id="reprisal" class="ability-button has-tip">
+              🤺
+              <div class="tooltip">
+                <div class="tooltip-header">Reprisal</div>
+                <div class ="tooltip-description">Attack the last foe you attacked. They cannot go below 1hp.</div>
+              </div>
+            </button>
+            <div class="bar">
+              <div class="reprisal-cd bar-inner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="equipped">
+        <h3>Equipped</h3>
+        <div id="equipped-list">
+          <div id="weapon">
+            
+          </div>
+          <div id="armor">
+    
+          </div>
+          <div id="helm">
+    
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      Coins: <span id="coins"></span>
-    </div>
-    <div>
-      Current layer: <span id="layer"></span>
-    </div>
-    <div>
-      Current zone: <span id="zone"></span>
-    </div>
-    <div id="roles">
+    
+    
+    <div id="roles" style="display: none;">
       <div class="role">
         <button id="shadowblade" class="role-button has-tip">
           🥷
@@ -46,82 +133,12 @@
         </button>
       </div>
     </div>
-    <div id="abilities">
-      <div class="ability">
-        <button id="attack" class="ability-button has-tip">
-          ⚔️
-          <div class="tooltip">
-            <div class="tooltip-header">
-              Wild Strike
-            </div>
-            <div class ="tooltip-description">
-              Attack a random foe on the battlefield.
-            </div>
-          </div>
-        </button>
-        <div class="bar">
-          <div class="wild-strike-cd bar-inner"></div>
-        </div>
-      </div>
-      <div class="ability">
-        <button id="assassinate" class="ability-button has-tip">
-          🗡️
-          <div class="tooltip">
-            <div class="tooltip-header">Assassinate</div>
-            <div class ="tooltip-description">Attack the lowest HP foe. Cooldown is reset if they die.</div>
-          </div>
-        </button>
-        <div class="bar">
-          <div class="assassinate-cd bar-inner"></div>
-        </div>
-      </div>
-      <div class="ability">
-        <button id="reprisal" class="ability-button has-tip">
-          🤺
-          <div class="tooltip">
-            <div class="tooltip-header">Reprisal</div>
-            <div class ="tooltip-description">Attack the last foe you attacked. They cannot go below 1hp.</div>
-          </div>
-        </button>
-        <div class="bar">
-          <div class="reprisal-cd bar-inner"></div>
-        </div>
-      </div>
-    </div>
-    <div id="layers">
-      <button id="go_layer_1" class="has-tip">
-        1
-        <div class="tooltip">Go to layer 1.</div>
-      </button>
-      <button id="go_layer_2" class="has-tip">
-        2
-        <div class="tooltip">Go to layer 2.</div>
-      </button>
-      <button id="go_layer_3" class="has-tip">
-        3
-        <div class="tooltip">Go to layer 3.</div>
-      </button>
-    </div>
-    <div id="loot">
-    </div>
-    <div id="equipment">
-      <div id="weapon">
-        
-      </div>
-      <div id="armor">
+    <div id="loot" class="section">
+      <h2>Inventory</h2>
+      <div id="loot-list">
 
       </div>
-      <div id="helm">
-        
-      </div>
     </div>
-    <div>
-      Foes in this zone: <span id="num_foes"></span>
-    </div>
-    <div id="foes">
-
-    </div>
-    
     <script src="app.js"></script>
   </body>
 </html>
