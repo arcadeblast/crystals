@@ -10,6 +10,19 @@ function updateState() {
   }
   attack_power = weapon.attack_power;
   armor_piercing = weapon.armor_piercing;
+  if(queueCooldown > 0) {
+    queueCooldown -= 1;
+  } else {
+    executeQueuedAbility(foes, attack_power);
+    queuedAbility += 1;
+    if(queuedAbility >= queue.length) {
+      queuedAbility = 0;
+    }
+    resetQueueCooldown();
+    updateFoeHTML();
+    updateQueueHTML();
+  }
+  
 }
 
 function updateHTML() {
@@ -23,19 +36,39 @@ function updateHTML() {
   updateEquippedHTML(weapon);
 }
 
+function updateQueueHTML() {
+  let queue_div = document.getElementById('attack-queue');
+  queue_div.replaceChildren();
+  for(let i = 0; i < queue.length; i++) {
+    let enabled = queuedAbility == i;
+    let ability_div = createQueueAbility(queue[i], enabled);
+    queue_div.appendChild(ability_div);
+  }
+}
+
+function createQueueAbility(name, enabled) {
+  let ability_div = document.createElement('div');
+  ability_div.classList.add('ability');
+  if(enabled) {
+    ability_div.classList.add('enabled');
+  }
+  ability_div.innerHTML = name;
+  return ability_div;
+}
+
 function updateFoeHTML() {
   let foes_div = document.getElementById('foes-list');
   foes_div.replaceChildren();
   for(let i = 0; i < foes.length; i++) {
-    let foe_div = createFoe(foes[i].hp, foes[i].max_hp);
+    let foe_div = createFoe(foes[i].name, foes[i].hp, foes[i].max_hp);
     foes_div.appendChild(foe_div);
   }
 }
 
-function createFoe(hp, max_hp) {
+function createFoe(name, hp, max_hp) {
   let foe_div = document.createElement('div');
   foe_div.classList.add('foe');
-  foe_div.innerHTML = '👺';
+  foe_div.innerHTML = '👺 ' + name;
   let hp_bar = createBar(hp, max_hp);
   foe_div.appendChild(hp_bar);
   return foe_div;
@@ -78,8 +111,18 @@ function createItemIcon(item) {
     item_div.innerHTML = '⚔️';
   } else if(item.weapon == 'battleaxe') {
     item_div.innerHTML = '🪓';
+  } else if(item.weapon == 'stick') {
+    item_div.innerHTML = '🧹';
   }
-  item_div.appendChild(createTip(item.forge + ' ' + item.weapon, item.attack_power + ' attack power, ' + item.armor_piercing + ' armor piercing'));
+  let tip_title = '';
+  if(item.forge) {
+    tip_title += item.forge + ' ';
+  }
+  tip_title += item.weapon;
+  let tip_description = item.attack_power + ' attack power, ';
+  tip_description += item.armor_piercing + ' armor piercing, ';
+  tip_description += item.spellbreak + ' spellbreak';
+  item_div.appendChild(createTip(tip_title, tip_description));
   return item_div;
 }
 
@@ -102,6 +145,18 @@ function removeFromLoot(item_guid) {
       break;
     }
   }
+}
+
+function executeAbility(name, foes, attack_power) {
+  if(name == "wild strike") {
+    attack_random(foes, attack_power);
+  } else if(name == 'assassinate') {
+    assassinate(foes, attack_power);
+  }
+}
+
+function executeQueuedAbility(foes, attack_power) {
+  executeAbility(queue[queuedAbility], foes, attack_power);
 }
 
 function equip(item_guid) {
@@ -157,15 +212,46 @@ function calculateDamage(attack_power, foe_armor) {
   return Math.floor(final_power);
 }
 
+function randomForge() {
+  let r = Math.random();
+  if(r < 0.9) {
+    return null;
+  } else if(r < 0.99) {
+    return 'gilded';
+  } else if(r < 0.999) {
+    return 'diamond';
+  } else {
+    return 'cosmic';
+  }
+}
+
+function lootSomethingMaybe() {
+  if(Math.random() < 1) {
+    loot.push({
+      weapon: 'dagger',
+      attack_power: 9,
+      armor_piercing: 1,
+      forge: randomForge(),
+      guid: crypto.randomUUID()
+    });
+    updateLootHTML();
+  }
+}
+
+function removeFoe(index) {
+  foes.splice(index, 1);
+  lootSomethingMaybe();
+}
+
 function attack_random(foes, attack_power) {
   wildStrikeCooldown = WILD_STRIKE_BASE_CD;
   let foe_i = getRandomInt(foes.length);
-  let foe = foes[foe_i]
+  let foe = foes[foe_i];
   let damage = calculateDamage(attack_power, foe.armor);
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
-    foes.splice(foe_i, 1);
+    removeFoe(foe_i);
   }
 }
 
@@ -182,7 +268,7 @@ function assassinate(foes, attack_power) {
   foe.hp -= damage;
   recent_foe = foe;
   if(foe.hp <= 0) {
-    foes.splice(foe_i, 1);
+    removeFoe(foe_i);
     assassinateCooldown = 0;
   }
 }
@@ -195,6 +281,10 @@ function reprisal(foe, attack_power) {
   if(foe.hp <= 0) {
     foe.hp = 1;
   }
+}
+
+function resetQueueCooldown() {
+  queueCooldown = 500;
 }
 
 setInterval(() => {
@@ -221,85 +311,52 @@ let layer_1_foes = [];
 let layer_2_foes = [];
 let layer_3_foes = [];
 
+let queue = [];
+queue.push('wild strike');
+queue.push('wild strike');
+queue.push('assassinate');
+
+let queuedAbility = 0;
+
+let queueCooldown = 1_000_000;
+resetQueueCooldown();
+
 let weapon = {
-  weapon: 'longsword',
-  attack_power: 9,
-  armor_piercing: 1,
-  forge: 'diamond',
-  guid: 'blahsdas'
+  weapon: 'stick',
+  attack_power: 3,
+  armor_piercing: 0,
+  spellbreak: 0,
+  forge: null,
+  guid: '042563f7-24bb-4998-851d-019499b0f06b'
 }
 
 let loot = [];
-loot.push (
-  {
-    weapon: 'dagger',
-    attack_power: 9,
-    armor_piercing: 1,
-    forge: 'cosmic',
-    guid: 'testguid'
-  },
-  {
-    weapon: 'battleaxe',
-    attack_power: 5,
-    armor_piercing: 5,
-    forge: 'gilded',
-    guid: 'afsdfsdfsdasfas'
-  }
-)
 
 function setUpLayer1Foes() {
-  for(let i = 0; i < 5; i++) {
-    layer_1_foes.push({
-      name: 'Drake',
-      hp: 100,
-      max_hp: 100,
-      armor: 0
-    })
-  }
+  layer_1_foes.push({
+    name: 'Blazing Drake',
+    hp: 100,
+    max_hp: 100,
+    armor: 0
+  })
 }
 
 function setUpLayer2Foes() {
-  for(let i = 0; i < 8; i++) {
-    layer_2_foes.push({
-      name: 'Drake',
-      hp: 100,
-      max_hp: 100,
-      armor: 0
-    })
-  }
-  for(let i = 0; i < 2; i++) {
-    layer_2_foes.push({
-      name: 'Serpent',
-      hp: 500,
-      max_hp: 500,
-      armor: 5
-    })
-  }
+  layer_2_foes.push({
+    name: 'Ironscale',
+    hp: 500,
+    max_hp: 500,
+    armor: 5
+  });
 }
 
 function setUpLayer3Foes() {
-  for(let i = 0; i < 10; i++) {
-    layer_3_foes.push({
-      name: 'Drake',
-      hp: 100,
-      max_hp: 100,
-      armor: 0
-    })
-  }
-  for(let i = 0; i < 3; i++) {
-    layer_3_foes.push({
-      name: 'Serpent',
-      hp: 500,
-      max_hp: 500,
-      armor: 5
-    })
-  }
   layer_3_foes.push({
-    name: 'Void Wyrm Zephyr',
+    name: 'Zephyr, Wyrm of the Void',
     hp: 1000,
     max_hp: 1000,
     armor: 10
-  })
+  });
 }
 
 setUpLayer1Foes();
@@ -309,6 +366,7 @@ foes = layer_1_foes;
 
 updateLootHTML();
 updateFoeHTML();
+updateQueueHTML();
 
 ability_div = document.getElementById('abilities');
 ability_div.addEventListener('click', ()=> {

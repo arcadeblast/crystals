@@ -21,13 +21,8 @@ button {
     padding: 1em;
 }
 
-#foes {
-    background-color: rgb(133, 45, 45);
-}
-
-#foes-list {
-    display: flex;
-    flex-wrap: wrap;
+#foe {
+    background-color: rgb(148, 148, 148);
 }
 
 .foe {
@@ -40,6 +35,18 @@ button {
 }
 
 .ability {
+    padding: 0.5em;
+    margin: 0.1em;
+    background-color: rgb(99, 99, 99);
+}
+
+.ability.enabled {
+    background-color: aliceblue;
+}
+
+#attack-queue {
+    background-color: rgb(199, 199, 199);
+    display: flex;
     padding: 1em;
 }
 
@@ -63,12 +70,14 @@ button {
 
 #loot-list {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .loot-item {
     margin: 1em;
     padding: 1em;
     user-select: none;
+    background-color: white;
 }
 
 .gilded {
