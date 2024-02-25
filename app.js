@@ -1,19 +1,10 @@
 function updateState() {
-  if(wildStrikeCooldown > 0) {
-    wildStrikeCooldown -= 1;
-  }
-  if(assassinateCooldown > 0) {
-    assassinateCooldown -= 1;
-  }
-  if(reprisalCooldown > 0) {
-    reprisalCooldown -= 1;
-  }
   attack_power = weapon.attack_power;
   armor_piercing = weapon.armor_piercing;
   if(queueCooldown > 0) {
     queueCooldown -= 1;
   } else {
-    executeQueuedAbility(foes, attack_power);
+    executeQueuedAbility(foe, attack_power);
     queuedAbility += 1;
     if(queuedAbility >= queue.length) {
       queuedAbility = 0;
@@ -30,9 +21,6 @@ function updateHTML() {
   document.getElementById('attack-power').innerHTML = attack_power;
   document.getElementById('spellbreak').innerHTML = spellbreak;
   document.getElementById('armor-piercing').innerHTML = armor_piercing;
-  document.getElementsByClassName('wild-strike-cd')[0].style.width = 'calc(' + wildStrikeCooldown * 100/ WILD_STRIKE_BASE_CD + '% - 2px)';
-  document.getElementsByClassName('assassinate-cd')[0].style.width = 'calc(' + assassinateCooldown * 100/ ASSASSINATE_BASE_CD + '% - 2px)';
-  document.getElementsByClassName('reprisal-cd')[0].style.width = 'calc(' + reprisalCooldown * 100/ REPRISAL_BASE_CD + '% - 2px)';
   updateEquippedHTML(weapon);
 }
 
@@ -93,10 +81,8 @@ function createQueueAbility(name, enabled, index) {
 function updateFoeHTML() {
   let foes_div = document.getElementById('foes-list');
   foes_div.replaceChildren();
-  for(let i = 0; i < foes.length; i++) {
-    let foe_div = createFoe(foes[i].name, foes[i].hp, foes[i].max_hp);
-    foes_div.appendChild(foe_div);
-  }
+  let foe_div = createFoe(foe.name, foe.hp, foe.max_hp);
+  foes_div.appendChild(foe_div);
 }
 
 function createFoe(name, hp, max_hp) {
@@ -181,16 +167,14 @@ function removeFromLoot(item_guid) {
   }
 }
 
-function executeAbility(name, foes, attack_power) {
-  if(name == "wild strike") {
-    attack_random(foes, attack_power);
-  } else if(name == 'assassinate') {
-    assassinate(foes, attack_power);
+function executeAbility(name, foe, attack_power) {
+  if(name == 'Heartstrike') {
+    heartstrike(foe, attack_power);
   }
 }
 
-function executeQueuedAbility(foes, attack_power) {
-  executeAbility(queue[queuedAbility], foes, attack_power);
+function executeQueuedAbility(foe, attack_power) {
+  executeAbility(queue[queuedAbility], foe, attack_power);
 }
 
 function equip(item_guid) {
@@ -277,44 +261,11 @@ function removeFoe(index) {
   lootSomethingMaybe();
 }
 
-function attack_random(foes, attack_power) {
-  wildStrikeCooldown = WILD_STRIKE_BASE_CD;
-  let foe_i = getRandomInt(foes.length);
-  let foe = foes[foe_i];
-  let damage = calculateDamage(attack_power, foe.armor);
-  foe.hp -= damage;
-  recent_foe = foe;
-  if(foe.hp <= 0) {
-    removeFoe(foe_i);
-  }
-}
 
-function assassinate(foes, attack_power) {
-  assassinateCooldown = ASSASSINATE_BASE_CD;
-  let foe_i = 0;
-  for(let i = 1; i < foes.length; i++) {
-    if(foes[i].hp < foes[foe_i].hp) {
-      foe_i = i;
-    }
-  }
-  let foe = foes[foe_i];
-  let damage = calculateDamage(attack_power, foe.armor);
-  foe.hp -= damage;
-  recent_foe = foe;
-  if(foe.hp <= 0) {
-    removeFoe(foe_i);
-    assassinateCooldown = 0;
-  }
-}
 
-function reprisal(foe, attack_power) {
-  reprisalCooldown = REPRISAL_BASE_CD;
-  let damage = calculateDamage(attack_power, foe.armor);
-  foe.hp -= damage;
-  recent_foe = foe;
-  if(foe.hp <= 0) {
-    foe.hp = 1;
-  }
+function heartstrike(target, attack_power) {
+  let damage = calculateDamage(attack_power, target.armor);
+  target.hp -= damage;
 }
 
 function resetQueueCooldown() {
@@ -326,30 +277,38 @@ setInterval(() => {
   updateState();
 }, 1);
 
-const WILD_STRIKE_BASE_CD = 250;
-const ASSASSINATE_BASE_CD = 1000;
-const REPRISAL_BASE_CD = 500;
-
 let layer = 1;
 let armor_piercing = 0;
 let attack_power = 1;
 let spellbreak = 0;
 let role = 'Shadowblade';
 
-let wildStrikeCooldown = 0;
-let assassinateCooldown = 0;
-let reprisalCooldown = 0;
 
-let foes = [];
-let layer_1_foes = [];
-let layer_2_foes = [];
-let layer_3_foes = [];
+
+let layer_1_foe = {
+  name: 'Blazing Drake',
+  hp: 100,
+  max_hp: 100,
+  armor: 0
+};
+let layer_2_foe = {
+  name: 'Ironscale',
+  hp: 500,
+  max_hp: 500,
+  armor: 5
+};
+let layer_3_foe = {
+  name: 'Zephyr, Wyrm of the Void',
+  hp: 1000,
+  max_hp: 1000,
+  armor: 10
+};
 
 let queue = [];
 let queue_max = 3;
-queue.push('wild strike');
-queue.push('wild strike');
-queue.push('assassinate');
+queue.push('Heartstrike');
+queue.push('Heartstrike');
+queue.push('Heartstrike');
 
 let queuedAbility = 0;
 
@@ -369,45 +328,15 @@ let loot = [];
 
 let abilities = [];
 abilities.push({
-  name: 'wild strike',
-  description: 'Attack the boss.'
+  name: 'Heartstrike',
+  description: 'Attack the boss. Damage is doubled if this is the final queue slot.'
 });
 abilities.push({
-  name: 'assassinate',
-  description: 'Attack the boss but like an assassin.'
+  name: 'Teleport',
+  description: 'Appear behind the enemy, catching them off guard. The next ability has its damage doubled.'
 });
 
-function setUpLayer1Foes() {
-  layer_1_foes.push({
-    name: 'Blazing Drake',
-    hp: 100,
-    max_hp: 100,
-    armor: 0
-  })
-}
-
-function setUpLayer2Foes() {
-  layer_2_foes.push({
-    name: 'Ironscale',
-    hp: 500,
-    max_hp: 500,
-    armor: 5
-  });
-}
-
-function setUpLayer3Foes() {
-  layer_3_foes.push({
-    name: 'Zephyr, Wyrm of the Void',
-    hp: 1000,
-    max_hp: 1000,
-    armor: 10
-  });
-}
-
-setUpLayer1Foes();
-setUpLayer2Foes();
-setUpLayer3Foes();
-foes = layer_1_foes;
+foe = layer_1_foe;
 
 updateLootHTML();
 updateFoeHTML();
@@ -426,38 +355,25 @@ attack_button.addEventListener('click', ()=> {
   }
 });
 
-assassinate_button = document.getElementById('assassinate');
-assassinate_button.addEventListener('click', ()=> {
-  if(assassinateCooldown <= 0) {
-    assassinate(foes, attack_power);
-  }
-});
-
-reprisal_button = document.getElementById('reprisal');
-reprisal_button.addEventListener('click', ()=> {
-  if(reprisalCooldown <= 0) {
-    reprisal(recent_foe, attack_power);
-  }
-});
 
 go_layer_1_button = document.getElementById('go_layer_1');
 go_layer_1_button.addEventListener('click', ()=> {
   layer = 1;
-  foes = layer_1_foes;
+  foe = layer_1_foe;
   updateFoeHTML();
 });
 
 go_layer_2_button = document.getElementById('go_layer_2');
 go_layer_2_button.addEventListener('click', ()=> {
   layer = 2;
-  foes = layer_2_foes;
+  foe = layer_2_foe;
   updateFoeHTML();
 });
 
 go_layer_3_button = document.getElementById('go_layer_3');
 go_layer_3_button.addEventListener('click', ()=> {
   layer = 3;
-  foes = layer_3_foes;
+  foe = layer_3_foe;
   updateFoeHTML();
 });
 
