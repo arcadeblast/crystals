@@ -41,18 +41,25 @@ function updateQueueHTML() {
   queue_div.replaceChildren();
   for(let i = 0; i < queue.length; i++) {
     let enabled = queuedAbility == i;
-    let ability_div = createQueueAbility(queue[i], enabled);
+    let ability_div = createQueueAbility(queue[i], enabled, i);
     queue_div.appendChild(ability_div);
   }
 }
 
-function createQueueAbility(name, enabled) {
+function createQueueAbility(name, enabled, index) {
   let ability_div = document.createElement('div');
   ability_div.classList.add('ability');
   if(enabled) {
     ability_div.classList.add('enabled');
   }
   ability_div.innerHTML = name;
+
+  let remove_button = document.createElement('button');
+  remove_button.classList.add('delete');
+  remove_button.innerHTML = 'X';
+  remove_button.setAttribute('index', index);
+
+  ability_div.appendChild(remove_button);
   return ability_div;
 }
 
@@ -419,5 +426,13 @@ loot_div = document.getElementById('loot');
 loot_div.addEventListener('click', function(e) {
   if(e.target.classList.contains('equip')) {
     equip(e.target.getAttribute('guid'));
+  }
+});
+
+queue_div = document.getElementById('attack-queue');
+queue_div.addEventListener('click', function(e) {
+  if(e.target.classList.contains('delete')) {
+    queue.splice(e.target.getAttribute('index'), 1);
+    updateQueueHTML();
   }
 });
