@@ -36,6 +36,29 @@ function updateHTML() {
   updateEquippedHTML(weapon);
 }
 
+function updateAbilitiesHTML() {
+  let abilitiesDiv = document.getElementById('abilities-list');
+  abilitiesDiv.replaceChildren();
+  for(let i = 0; i < abilities.length; i++) {
+    let ability_div = createAbility(abilities[i].name);
+    abilitiesDiv.appendChild(ability_div);
+  }
+}
+
+function createAbility(name) {
+  let ability_div = document.createElement('div');
+  ability_div.classList.add('ability');
+  ability_div.innerHTML = name;
+
+  let add_button = document.createElement('button');
+  add_button.classList.add('add');
+  add_button.innerHTML = '+';
+  add_button.setAttribute('ability', name);
+
+  ability_div.appendChild(add_button);
+  return ability_div;
+}
+
 function updateQueueHTML() {
   let queue_div = document.getElementById('attack-queue');
   queue_div.replaceChildren();
@@ -52,7 +75,11 @@ function createQueueAbility(name, enabled, index) {
   if(enabled) {
     ability_div.classList.add('enabled');
   }
-  ability_div.innerHTML = name;
+  if(name) {
+    ability_div.innerHTML = name;
+  } else {
+    ability_div.innerHTML = "-- EMPTY -- ";
+  }
 
   let remove_button = document.createElement('button');
   remove_button.classList.add('delete');
@@ -319,6 +346,7 @@ let layer_2_foes = [];
 let layer_3_foes = [];
 
 let queue = [];
+let queue_max = 3;
 queue.push('wild strike');
 queue.push('wild strike');
 queue.push('assassinate');
@@ -338,6 +366,16 @@ let weapon = {
 }
 
 let loot = [];
+
+let abilities = [];
+abilities.push({
+  name: 'wild strike',
+  description: 'Attack the boss.'
+});
+abilities.push({
+  name: 'assassinate',
+  description: 'Attack the boss but like an assassin.'
+});
 
 function setUpLayer1Foes() {
   layer_1_foes.push({
@@ -374,6 +412,7 @@ foes = layer_1_foes;
 updateLootHTML();
 updateFoeHTML();
 updateQueueHTML();
+updateAbilitiesHTML();
 
 ability_div = document.getElementById('abilities');
 ability_div.addEventListener('click', ()=> {
@@ -432,7 +471,20 @@ loot_div.addEventListener('click', function(e) {
 queue_div = document.getElementById('attack-queue');
 queue_div.addEventListener('click', function(e) {
   if(e.target.classList.contains('delete')) {
-    queue.splice(e.target.getAttribute('index'), 1);
+    queue[e.target.getAttribute('index')] = null;
+    updateQueueHTML();
+  }
+});
+
+queue_div = document.getElementById('abilities-list');
+queue_div.addEventListener('click', function(e) {
+  if(e.target.classList.contains('add')) {
+    for(let i = 0; i < queue.length; i++) {
+      if(!queue[i]) {
+        queue[i] = e.target.getAttribute("ability");
+        break;
+      }
+    }
     updateQueueHTML();
   }
 });
