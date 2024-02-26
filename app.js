@@ -170,6 +170,8 @@ function removeFromLoot(item_guid) {
 function executeAbility(name, foe, attack_power, queueIndex) {
   if(name == 'Heartstrike') {
     heartstrike(foe, attack_power, queueIndex);
+  } else if(name == "Teleport") {
+    teleport();
   }
 }
 
@@ -259,14 +261,24 @@ function removeFoe(index) {
   lootSomethingMaybe();
 }
 
-
+function applyDirectDamage(target, amount) {
+  if(recentlyTeleported) {
+    amount *= 2;
+    recentlyTeleported = false;
+  }
+  target.hp -= amount;
+}
 
 function heartstrike(target, attack_power, queue_index) {
   let damage = calculateDamage(attack_power, target.armor);
   if(queue_index == queue.length - 1) {
     damage *= 2;
   }
-  target.hp -= damage;
+  applyDirectDamage(target, damage);
+}
+
+function teleport() {
+  recentlyTeleported = true;
 }
 
 function resetQueueCooldown() {
@@ -283,6 +295,7 @@ let armor_piercing = 0;
 let attack_power = 1;
 let spellbreak = 0;
 let role = 'Shadowblade';
+let recentlyTeleported = false;
 
 
 
