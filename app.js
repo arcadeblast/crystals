@@ -167,14 +167,14 @@ function removeFromLoot(item_guid) {
   }
 }
 
-function executeAbility(name, foe, attack_power) {
+function executeAbility(name, foe, attack_power, queueIndex) {
   if(name == 'Heartstrike') {
-    heartstrike(foe, attack_power);
+    heartstrike(foe, attack_power, queueIndex);
   }
 }
 
 function executeQueuedAbility(foe, attack_power) {
-  executeAbility(queue[queuedAbility], foe, attack_power);
+  executeAbility(queue[queuedAbility], foe, attack_power, queuedAbility);
 }
 
 function equip(item_guid) {
@@ -225,9 +225,7 @@ function getRandomInt(max) {
 }
 
 function calculateDamage(attack_power, foe_armor) {
-  final_power = attack_power + getRandomInt(attack_power) / 2;
-  final_power *= 1 - (foe_armor / 100);
-  return Math.floor(final_power);
+  return attack_power;
 }
 
 function randomForge() {
@@ -263,8 +261,11 @@ function removeFoe(index) {
 
 
 
-function heartstrike(target, attack_power) {
+function heartstrike(target, attack_power, queue_index) {
   let damage = calculateDamage(attack_power, target.armor);
+  if(queue_index == queue.length - 1) {
+    damage *= 2;
+  }
   target.hp -= damage;
 }
 
