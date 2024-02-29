@@ -4,9 +4,12 @@ function updateState() {
     queueCooldown -= 1;
   } else {
     executeQueuedAbility(foe, attack_power);
+    processConditions(foe, attack_power);
     queuedAbility += 1;
     if(queuedAbility >= queue.length) {
       queuedAbility = 0;
+      venomActive = false;
+      recentlyFeinted = false;
     }
     resetQueueCooldown();
     updateFoeHTML();
@@ -177,11 +180,19 @@ function executeAbility(name, foe, attack_power, queueIndex) {
     reprisal(foe, queueIndex);
   } else if(name == "Gore") {
     gore(foe, attack_power);
+  } else if(name == "Venom Slash") {
+    venomSlash(attack_power);
   }
 }
 
 function executeQueuedAbility(foe, attack_power) {
   executeAbility(queue[queuedAbility], foe, attack_power, queuedAbility);
+}
+
+function processConditions(foe, attack_power) {
+  if(venomActive) {
+    applyIndirectDamage(foe, attack_power / 3);
+  }
 }
 
 function equip(item_guid) {
@@ -274,6 +285,10 @@ function applyDirectDamage(target, amount) {
   lastDirectDamage = amount;
 }
 
+function applyIndirectDamage(target, amount) {
+  target.hp -= amount;
+}
+
 function heartstrike(target, attack_power, queue_index) {
   let damage = calculateDamage(attack_power);
   if(queue_index == queue.length - 1) {
@@ -284,6 +299,10 @@ function heartstrike(target, attack_power, queue_index) {
 
 function feint() {
   recentlyFeinted = true;
+}
+
+function venomSlash() {
+  venomActive = true;
 }
 
 function gore(target, attack_power) {
@@ -319,6 +338,7 @@ let attack_power = 1;
 let role = 'Shadowblade';
 
 let recentlyFeinted = false;
+let venomActive = false;
 let lastDirectDamage = 0;
 
 
@@ -379,6 +399,10 @@ abilities.push({
 abilities.push({
   name: 'Gore',
   description: 'Deal a massive blow for triple damage. Can only be used once in the queue.'
+});
+abilities.push({
+  name: 'Venom Slash',
+  description: 'Envenomate the enemy, dealing passive damage for the rest of the queue.'
 });
 
 foe = layer_1_foe;
