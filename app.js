@@ -180,6 +180,8 @@ function executeAbility(name, foe, attack_power, queueIndex) {
     ambush(foe, attack_power, queueIndex);
   } else if(name == "Reprisal") {
     reprisal(foe, queueIndex);
+  } else if(name == "Gore") {
+    gore(foe, attack_power);
   }
 }
 
@@ -290,6 +292,12 @@ function feint() {
   recentlyFeinted = true;
 }
 
+function gore(target, attack_power) {
+  let damage = calculateDamage(attack_power, target.armor);
+  damage *= 3;
+  applyDirectDamage(target, damage);
+}
+
 function ambush(target, attack_power, queue_index) {
   let damage = calculateDamage(attack_power, target.armor);
   if(queue_index == 0) {
@@ -381,6 +389,10 @@ abilities.push({
   name: 'Reprisal',
   description: 'Strike the enemy for the same damage done on the previous attack.'
 });
+abilities.push({
+  name: 'Gore',
+  description: 'Deal a massive blow for triple damage. Can only be used once in the queue.'
+});
 
 foe = layer_1_foe;
 
@@ -438,15 +450,26 @@ queue_div.addEventListener('click', function(e) {
   }
 });
 
+function addToQueue(ability) {
+  if(ability == "Gore") {
+    for(let i = 0; i < queue.length; i++) {
+      if(queue[i] == "Gore") {
+        return;
+      }
+    }
+  }
+  for(let i = 0; i < queue.length; i++) {
+    if(!queue[i]) {
+      queue[i] = ability;
+      break;
+    }
+  }
+}
+
 queue_div = document.getElementById('abilities-list');
 queue_div.addEventListener('click', function(e) {
   if(e.target.classList.contains('add')) {
-    for(let i = 0; i < queue.length; i++) {
-      if(!queue[i]) {
-        queue[i] = e.target.getAttribute("ability");
-        break;
-      }
-    }
+    addToQueue(e.target.getAttribute("ability"));
     updateQueueHTML();
   }
 });
