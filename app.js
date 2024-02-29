@@ -1,6 +1,5 @@
 function updateState() {
   attack_power = weapon.attack_power;
-  armor_piercing = weapon.armor_piercing;
   if(queueCooldown > 0) {
     queueCooldown -= 1;
   } else {
@@ -19,8 +18,6 @@ function updateState() {
 function updateHTML() {
   document.getElementById('role').innerHTML = role;
   document.getElementById('attack-power').innerHTML = attack_power;
-  document.getElementById('spellbreak').innerHTML = spellbreak;
-  document.getElementById('armor-piercing').innerHTML = armor_piercing;
   updateEquippedHTML(weapon);
 }
 
@@ -144,8 +141,6 @@ function createItemIcon(item) {
   }
   tip_title += item.weapon;
   let tip_description = item.attack_power + ' attack power, ';
-  tip_description += item.armor_piercing + ' armor piercing, ';
-  tip_description += item.spellbreak + ' spellbreak';
   item_div.appendChild(createTip(tip_title, tip_description));
   return item_div;
 }
@@ -236,7 +231,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function calculateDamage(attack_power, foe_armor) {
+function calculateDamage(attack_power) {
   return attack_power;
 }
 
@@ -258,7 +253,6 @@ function lootSomethingMaybe() {
     loot.push({
       weapon: 'dagger',
       attack_power: 9,
-      armor_piercing: 1,
       forge: randomForge(),
       guid: crypto.randomUUID()
     });
@@ -281,7 +275,7 @@ function applyDirectDamage(target, amount) {
 }
 
 function heartstrike(target, attack_power, queue_index) {
-  let damage = calculateDamage(attack_power, target.armor);
+  let damage = calculateDamage(attack_power);
   if(queue_index == queue.length - 1) {
     damage *= 2;
   }
@@ -293,13 +287,13 @@ function feint() {
 }
 
 function gore(target, attack_power) {
-  let damage = calculateDamage(attack_power, target.armor);
+  let damage = calculateDamage(attack_power);
   damage *= 3;
   applyDirectDamage(target, damage);
 }
 
 function ambush(target, attack_power, queue_index) {
-  let damage = calculateDamage(attack_power, target.armor);
+  let damage = calculateDamage(attack_power);
   if(queue_index == 0) {
     damage *= 2;
   }
@@ -321,9 +315,7 @@ setInterval(() => {
 }, 1);
 
 let layer = 1;
-let armor_piercing = 0;
 let attack_power = 1;
-let spellbreak = 0;
 let role = 'Shadowblade';
 
 let recentlyFeinted = false;
@@ -334,20 +326,17 @@ let lastDirectDamage = 0;
 let layer_1_foe = {
   name: 'Blazing Drake',
   hp: 1_000,
-  max_hp: 1_000,
-  armor: 0
+  max_hp: 1_000
 };
 let layer_2_foe = {
   name: 'Ironscale',
   hp: 5_000,
-  max_hp: 5_000,
-  armor: 5
+  max_hp: 5_000
 };
 let layer_3_foe = {
   name: 'Zephyr, Wyrm of the Void',
   hp: 10_000,
-  max_hp: 10_000,
-  armor: 10
+  max_hp: 10_000
 };
 
 let queue = [];
@@ -364,8 +353,6 @@ resetQueueCooldown();
 let weapon = {
   weapon: 'stick',
   attack_power: 3,
-  armor_piercing: 0,
-  spellbreak: 0,
   forge: null,
   guid: '042563f7-24bb-4998-851d-019499b0f06b'
 }
