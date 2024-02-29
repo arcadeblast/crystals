@@ -31,6 +31,7 @@ button {
 
 #abilities-list {
     display: flex;
+    flex-wrap: wrap;
     padding: 1em;
 }
 
@@ -38,6 +39,7 @@ button {
     padding: 0.5em;
     margin: 0.1em;
     background-color: rgb(99, 99, 99);
+    width: 10em;
 }
 
 .ability.enabled {
@@ -91,9 +93,6 @@ button {
 .cosmic {
     background-color: rgb(62, 20, 102);
     background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Starsinthesky.jpg/1024px-Starsinthesky.jpg);
-}
-
-#equipped {
 }
 
 #equipped-list {

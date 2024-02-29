@@ -28,12 +28,12 @@ function updateAbilitiesHTML() {
   let abilitiesDiv = document.getElementById('abilities-list');
   abilitiesDiv.replaceChildren();
   for(let i = 0; i < abilities.length; i++) {
-    let ability_div = createAbility(abilities[i].name);
+    let ability_div = createAbility(abilities[i].name, abilities[i].description);
     abilitiesDiv.appendChild(ability_div);
   }
 }
 
-function createAbility(name) {
+function createAbility(name, description) {
   let ability_div = document.createElement('div');
   ability_div.classList.add('ability');
   ability_div.innerHTML = name;
@@ -42,8 +42,12 @@ function createAbility(name) {
   add_button.classList.add('add');
   add_button.innerHTML = '+';
   add_button.setAttribute('ability', name);
-
   ability_div.appendChild(add_button);
+
+  let descriptionDiv = document.createElement('div');
+  descriptionDiv.innerHTML = description;
+  ability_div.appendChild(descriptionDiv);
+
   return ability_div;
 }
 
@@ -170,8 +174,12 @@ function removeFromLoot(item_guid) {
 function executeAbility(name, foe, attack_power, queueIndex) {
   if(name == 'Heartstrike') {
     heartstrike(foe, attack_power, queueIndex);
-  } else if(name == "Teleport") {
-    teleport();
+  } else if(name == "Feint") {
+    feint();
+  } else if(name == "Ambush") {
+    ambush(foe, attack_power, queueIndex);
+  } else if(name == "Reprisal") {
+    reprisal(foe, queueIndex);
   }
 }
 
@@ -262,11 +270,12 @@ function removeFoe(index) {
 }
 
 function applyDirectDamage(target, amount) {
-  if(recentlyTeleported) {
+  if(recentlyFeinted) {
     amount *= 2;
-    recentlyTeleported = false;
+    recentlyFeinted = false;
   }
   target.hp -= amount;
+  lastDirectDamage = amount;
 }
 
 function heartstrike(target, attack_power, queue_index) {
@@ -277,8 +286,21 @@ function heartstrike(target, attack_power, queue_index) {
   applyDirectDamage(target, damage);
 }
 
-function teleport() {
-  recentlyTeleported = true;
+function feint() {
+  recentlyFeinted = true;
+}
+
+function ambush(target, attack_power, queue_index) {
+  let damage = calculateDamage(attack_power, target.armor);
+  if(queue_index == 0) {
+    damage *= 2;
+  }
+  applyDirectDamage(target, damage);
+}
+
+function reprisal(target, queue_index) {
+  let damage = lastDirectDamage;
+  applyDirectDamage(target, damage);
 }
 
 function resetQueueCooldown() {
@@ -295,34 +317,36 @@ let armor_piercing = 0;
 let attack_power = 1;
 let spellbreak = 0;
 let role = 'Shadowblade';
-let recentlyTeleported = false;
+
+let recentlyFeinted = false;
+let lastDirectDamage = 0;
 
 
 
 let layer_1_foe = {
   name: 'Blazing Drake',
-  hp: 100,
-  max_hp: 100,
+  hp: 1_000,
+  max_hp: 1_000,
   armor: 0
 };
 let layer_2_foe = {
   name: 'Ironscale',
-  hp: 500,
-  max_hp: 500,
+  hp: 5_000,
+  max_hp: 5_000,
   armor: 5
 };
 let layer_3_foe = {
   name: 'Zephyr, Wyrm of the Void',
-  hp: 1000,
-  max_hp: 1000,
+  hp: 10_000,
+  max_hp: 10_000,
   armor: 10
 };
 
 let queue = [];
 let queue_max = 3;
-queue.push('Heartstrike');
-queue.push('Heartstrike');
-queue.push('Heartstrike');
+queue.push(null);
+queue.push(null);
+queue.push(null);
 
 let queuedAbility = 0;
 
@@ -343,11 +367,19 @@ let loot = [];
 let abilities = [];
 abilities.push({
   name: 'Heartstrike',
-  description: 'Attack the boss. Damage is doubled if this is the final queue slot.'
+  description: 'Attack the enemy in their vitals. Damage is doubled when in the final queue slot.'
 });
 abilities.push({
-  name: 'Teleport',
-  description: 'Appear behind the enemy, catching them off guard. The next ability has its damage doubled.'
+  name: 'Feint',
+  description: 'Disorient the enemy with a mock blow. The next ability has its damage doubled.'
+});
+abilities.push({
+  name: 'Ambush',
+  description: 'Engage the enemy with a surprise attack. Damage is doubled when in the first queue slot.'
+});
+abilities.push({
+  name: 'Reprisal',
+  description: 'Strike the enemy for the same damage done on the previous attack.'
 });
 
 foe = layer_1_foe;
