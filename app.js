@@ -39,12 +39,15 @@ function updateAbilitiesHTML() {
 }
 
 function updateHintHTML() {
-  for(let i = 0; i < queue.length; i++) {
-    if(queue[i]) {
-      return;
-    }
+  hintsDiv = document.getElementById('hints');
+  hintsDiv.replaceChildren();
+
+  if(emptySlotHint) {
+    emptySlotHintDiv = document.createElement('div');
+    emptySlotHintDiv.classList.add('hint');
+    emptySlotHintDiv.innerHTML = 'Add some abilities to the queue!';
+    hintsDiv.appendChild(emptySlotHintDiv);
   }
-  document.getElementById('hint').innerHTML = 'Add some abilities to the queue!';
 }
 
 function createAbility(name, description) {
@@ -358,7 +361,6 @@ let lastDirectDamage = 0;
 let num_actions = 0;
 
 
-
 let layer_1_foe = {
   name: 'Prison Guard Vraxis',
   hp: 1_000,
@@ -386,6 +388,8 @@ let queuedAbility = 0;
 
 let queueCooldown = 1_000_000;
 resetQueueCooldown();
+
+let emptySlotHint = queue.includes(null);
 
 let weapon = {
   weapon: 'stick',
@@ -493,6 +497,8 @@ function addToQueue(ability) {
       break;
     }
   }
+  emptySlotHint = queue.includes(null);
+  updateHintHTML();
 }
 
 queue_div = document.getElementById('abilities-list');

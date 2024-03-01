@@ -137,7 +137,7 @@ button {
     background-color: rgb(100, 235, 111);
 }
 
-#hint {
+.hint {
     background-color: rgb(133, 255, 143);
     border-left: 0.5em solid rgb(45, 197, 40);
     padding: 1em;
