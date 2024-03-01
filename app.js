@@ -11,6 +11,11 @@ function updateState() {
       venomActive = false;
       recentlyFeinted = false;
     }
+    num_actions += 1;
+    if(num_actions >= foe.action_limit) {
+      num_actions = 0;
+      foe.hp = foe.max_hp;
+    }
     resetQueueCooldown();
     updateFoeHTML();
     updateQueueHTML();
@@ -94,14 +99,14 @@ function createQueueAbility(name, enabled, index) {
 function updateFoeHTML() {
   let foes_div = document.getElementById('foes-list');
   foes_div.replaceChildren();
-  let foe_div = createFoe(foe.name, foe.hp, foe.max_hp);
+  let foe_div = createFoe(foe.name, foe.hp, foe.max_hp, foe.action_limit);
   foes_div.appendChild(foe_div);
 }
 
-function createFoe(name, hp, max_hp) {
+function createFoe(name, hp, max_hp, action_limit) {
   let foe_div = document.createElement('div');
   foe_div.classList.add('foe');
-  foe_div.innerHTML = '👺 ' + name;
+  foe_div.innerHTML = '👺 ' + name + ' (' + num_actions + '/' + action_limit + ')';
   let hp_bar = createBar(hp, max_hp);
   foe_div.appendChild(hp_bar);
   return foe_div;
@@ -349,6 +354,8 @@ let role = 'Shadowblade';
 let recentlyFeinted = false;
 let venomActive = false;
 let lastDirectDamage = 0;
+
+let num_actions = 0;
 
 
 
