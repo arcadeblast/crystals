@@ -83,24 +83,30 @@ function updateQueueHTML() {
   }
 }
 
-function createQueueAbility(name, enabled, index) {
+function createQueueAbility(ability, enabled, index) {
   let ability_div = document.createElement('div');
   ability_div.classList.add('ability');
   if(enabled) {
     ability_div.classList.add('enabled');
   }
-  if(name) {
-    ability_div.innerHTML = name;
-  } else {
-    ability_div.innerHTML = "-- EMPTY -- ";
+  // if(name) {
+  //   ability_div.innerHTML = name;
+  // } else {
+  //   ability_div.innerHTML = "-- EMPTY -- ";
+  // }
+  if(ability) {
+    let img = document.createElement('img');
+    img.src = ability.icon;
+    img.classList.add('ability-icon');
+    ability_div.appendChild(img);
   }
 
   let remove_button = document.createElement('button');
   remove_button.classList.add('delete');
   remove_button.innerHTML = 'X';
   remove_button.setAttribute('index', index);
-
   ability_div.appendChild(remove_button);
+
   return ability_div;
 }
 
@@ -495,7 +501,7 @@ queue_div.addEventListener('click', function(e) {
 });
 
 function addToQueue(ability) {
-  if(ability == "Gore") {
+  if(ability.name == "Gore") {
     for(let i = 0; i < queue.length; i++) {
       if(queue[i] == "Gore") {
         return;
@@ -515,7 +521,11 @@ function addToQueue(ability) {
 queue_div = document.getElementById('abilities-list');
 queue_div.addEventListener('click', function(e) {
   if(e.target.classList.contains('add')) {
-    addToQueue(e.target.getAttribute("ability"));
+    addToQueue(getAbilityFromName(e.target.getAttribute("ability")));
     updateQueueHTML();
   }
 });
+
+function getAbilityFromName(name) {
+  return abilities.find(ability => ability.name == name);
+}
