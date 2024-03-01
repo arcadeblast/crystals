@@ -33,7 +33,7 @@ function updateAbilitiesHTML() {
   let abilitiesDiv = document.getElementById('abilities-list');
   abilitiesDiv.replaceChildren();
   for(let i = 0; i < abilities.length; i++) {
-    let ability_div = createAbility(abilities[i].name, abilities[i].description);
+    let ability_div = createAbility(abilities[i].name, abilities[i].description, abilities[i].icon);
     abilitiesDiv.appendChild(ability_div);
   }
 }
@@ -45,12 +45,12 @@ function updateHintHTML() {
   if(emptySlotHint) {
     emptySlotHintDiv = document.createElement('div');
     emptySlotHintDiv.classList.add('hint');
-    emptySlotHintDiv.innerHTML = 'Add some abilities to the queue!';
+    emptySlotHintDiv.innerHTML = '⚠️ Add some abilities to the queue!';
     hintsDiv.appendChild(emptySlotHintDiv);
   }
 }
 
-function createAbility(name, description) {
+function createAbility(name, description, icon) {
   let ability_div = document.createElement('div');
   ability_div.classList.add('ability');
   ability_div.innerHTML = name;
@@ -64,6 +64,11 @@ function createAbility(name, description) {
   let descriptionDiv = document.createElement('div');
   descriptionDiv.innerHTML = description;
   ability_div.appendChild(descriptionDiv);
+
+  let img = document.createElement('img');
+  img.src = icon;
+  img.classList.add('ability-icon');
+  ability_div.appendChild(img);
 
   return ability_div;
 }
@@ -403,27 +408,33 @@ let loot = [];
 let abilities = [];
 abilities.push({
   name: 'Heartstrike',
-  description: 'Attack the enemy in their vitals. Damage is doubled when in the final queue slot.'
+  description: 'Attack the enemy in their vitals. Damage is doubled when in the final queue slot.',
+  icon: 'assets/heartstrike.jpg'
 });
 abilities.push({
   name: 'Feint',
-  description: 'Disorient the enemy with a mock blow. The next ability has its damage doubled.'
+  description: 'Disorient the enemy with a mock blow. The next ability has its damage doubled.',
+  icon: 'assets/feint.jpg'
 });
 abilities.push({
   name: 'Ambush',
-  description: 'Engage the enemy with a surprise attack. Damage is doubled when in the first queue slot.'
+  description: 'Engage the enemy with a surprise attack. Damage is doubled when in the first queue slot.',
+  icon: 'assets/ambush.jpg'
 });
 abilities.push({
   name: 'Reprisal',
-  description: 'Strike the enemy for the same damage done on the previous attack.'
+  description: 'Strike the enemy for the same damage done on the previous attack.',
+  icon: 'assets/reprisal.jpg'
 });
 abilities.push({
   name: 'Gore',
-  description: 'Deal a massive blow for triple damage. Can only be used once in the queue.'
+  description: 'Deal a massive blow for triple damage. Can only be used once in the queue.',
+  icon: 'assets/gore.jpg'
 });
 abilities.push({
   name: 'Venom Slash',
-  description: 'Envenomate the enemy, dealing passive damage for the rest of the queue.'
+  description: 'Envenomate the enemy, dealing passive damage for the rest of the queue.',
+  icon: 'assets/venom_strike.jpg'
 });
 
 foe = layer_1_foe;

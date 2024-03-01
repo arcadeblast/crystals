@@ -144,3 +144,7 @@ button {
     font-size: large;
     font-weight: bold;
 }
+
+.ability-icon {
+    width: 4em;
+}
