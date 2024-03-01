@@ -33,6 +33,15 @@ function updateAbilitiesHTML() {
   }
 }
 
+function updateHintHTML() {
+  for(let i = 0; i < queue.length; i++) {
+    if(queue[i]) {
+      return;
+    }
+  }
+  document.getElementById('hint').innerHTML = 'Add some abilities to the queue!';
+}
+
 function createAbility(name, description) {
   let ability_div = document.createElement('div');
   ability_div.classList.add('ability');
@@ -344,9 +353,10 @@ let lastDirectDamage = 0;
 
 
 let layer_1_foe = {
-  name: 'Blazing Drake',
+  name: 'Prison Guard Vraxis',
   hp: 1_000,
-  max_hp: 1_000
+  max_hp: 1_000,
+  action_limit: 50
 };
 let layer_2_foe = {
   name: 'Ironscale',
@@ -411,6 +421,7 @@ updateLootHTML();
 updateFoeHTML();
 updateQueueHTML();
 updateAbilitiesHTML();
+updateHintHTML();
 
 ability_div = document.getElementById('abilities');
 ability_div.addEventListener('click', ()=> {
