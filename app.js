@@ -38,15 +38,22 @@ function updateAbilitiesHTML() {
   }
 }
 
+function createHint(text) {
+  hintDiv = document.createElement('div');
+  hintDiv.classList.add('hint');
+  hintDiv.innerHTML = '⚠️' + text;
+  return hintDiv;
+}
+
 function updateHintHTML() {
   hintsDiv = document.getElementById('hints');
   hintsDiv.replaceChildren();
 
   if(emptySlotHint) {
-    emptySlotHintDiv = document.createElement('div');
-    emptySlotHintDiv.classList.add('hint');
-    emptySlotHintDiv.innerHTML = '⚠️ Add some abilities to the queue!';
-    hintsDiv.appendChild(emptySlotHintDiv);
+    hintsDiv.appendChild(createHint('Add some abilities to the queue!'));
+  }
+  if(!emptySlotHint && vraxisNeverDied) {
+    hintsDiv.appendChild(createHint('Try to defeat Vraxis in under 50 moves!'));
   }
 }
 
@@ -390,6 +397,7 @@ let queueCooldown = 1_000_000;
 resetQueueCooldown();
 
 let emptySlotHint = queue.includes(null);
+let vraxisNeverDied = true;
 
 let weapon = {
   weapon: 'stick',
