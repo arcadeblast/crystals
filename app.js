@@ -3,7 +3,7 @@ function updateState() {
   if(queueCooldown > 0) {
     queueCooldown -= 1;
   } else {
-    executeQueuedAbility(foe, attack_power);
+    executeQueuedAbility(queue, foe, attack_power);
     processConditions(foe, attack_power);
     queuedAbility += 1;
     if(queuedAbility >= queue.length) {
@@ -53,7 +53,7 @@ function updateHintHTML() {
     hintsDiv.appendChild(createHint('Add some abilities to the queue!'));
   }
   if(!emptySlotHint && vraxisNeverDied) {
-    hintsDiv.appendChild(createHint('Try to defeat Vraxis in under 50 moves!'));
+    hintsDiv.appendChild(createHint('Try to defeat Vraxis in under 10 moves!'));
   }
 }
 
@@ -193,23 +193,26 @@ function removeFromLoot(item_guid) {
   }
 }
 
-function executeAbility(name, foe, attack_power, queueIndex) {
-  if(name == 'Heartstrike') {
+function executeAbility(ability, foe, attack_power, queueIndex) {
+  if(!ability) {
+    return;
+  }
+  if(ability.name == 'Heartstrike') {
     heartstrike(foe, attack_power, queueIndex);
-  } else if(name == "Feint") {
+  } else if(ability.name == "Feint") {
     feint();
-  } else if(name == "Ambush") {
+  } else if(ability.name == "Ambush") {
     ambush(foe, attack_power, queueIndex);
-  } else if(name == "Reprisal") {
+  } else if(ability.name == "Reprisal") {
     reprisal(foe, queueIndex);
-  } else if(name == "Gore") {
+  } else if(ability.name == "Gore") {
     gore(foe, attack_power);
-  } else if(name == "Venom Slash") {
+  } else if(ability.name == "Venom Slash") {
     venomSlash(attack_power);
   }
 }
 
-function executeQueuedAbility(foe, attack_power) {
+function executeQueuedAbility(queue, foe, attack_power) {
   executeAbility(queue[queuedAbility], foe, attack_power, queuedAbility);
 }
 
@@ -370,9 +373,9 @@ let num_actions = 0;
 
 let layer_1_foe = {
   name: 'Prison Guard Vraxis',
-  hp: 1_000,
-  max_hp: 1_000,
-  action_limit: 50
+  hp: 100,
+  max_hp: 100,
+  action_limit: 10
 };
 let layer_2_foe = {
   name: 'Ironscale',
@@ -500,7 +503,7 @@ queue_div.addEventListener('click', function(e) {
 function addToQueue(ability) {
   if(ability.name == "Gore") {
     for(let i = 0; i < queue.length; i++) {
-      if(queue[i] == "Gore") {
+      if(queue[i] && queue[i].name == "Gore") {
         return;
       }
     }
