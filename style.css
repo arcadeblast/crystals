@@ -35,12 +35,19 @@ button {
 .ability {
     padding: 0.5em;
     margin: 0.1em;
-    background-color: rgb(99, 99, 99);
+    background-color: rgb(219, 219, 219);
+    border-radius: 5px;
     width: 10em;
 }
 
-.ability.enabled {
-    background-color: rgb(170, 170, 170);
+.queue-ability {
+    margin: 0.1em;
+    background-color: rgb(219, 219, 219);
+    border-radius: 15px;
+}
+
+.queue-ability.enabled {
+    background-color: rgb(121, 121, 121);
 }
 
 #attack-queue {
@@ -147,4 +154,9 @@ button {
 
 .ability-icon {
     width: 4em;
+
+    background: #DDD;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 15px;
 }

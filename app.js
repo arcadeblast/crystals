@@ -53,22 +53,18 @@ function updateHintHTML() {
 function createAbility(name, description, icon) {
   let ability_div = document.createElement('div');
   ability_div.classList.add('ability');
-  ability_div.innerHTML = name;
 
-  let add_button = document.createElement('button');
-  add_button.classList.add('add');
-  add_button.innerHTML = '+';
-  add_button.setAttribute('ability', name);
-  ability_div.appendChild(add_button);
+  let img = document.createElement('img');
+  img.src = icon;
+  img.classList.add('ability-icon');
+  img.classList.add('add');
+  img.setAttribute('ability', name);
+  ability_div.appendChild(img);
 
   let descriptionDiv = document.createElement('div');
   descriptionDiv.innerHTML = description;
   ability_div.appendChild(descriptionDiv);
 
-  let img = document.createElement('img');
-  img.src = icon;
-  img.classList.add('ability-icon');
-  ability_div.appendChild(img);
 
   return ability_div;
 }
@@ -85,27 +81,20 @@ function updateQueueHTML() {
 
 function createQueueAbility(ability, enabled, index) {
   let ability_div = document.createElement('div');
-  ability_div.classList.add('ability');
+  ability_div.classList.add('queue-ability');
   if(enabled) {
     ability_div.classList.add('enabled');
   }
-  // if(name) {
-  //   ability_div.innerHTML = name;
-  // } else {
-  //   ability_div.innerHTML = "-- EMPTY -- ";
-  // }
   if(ability) {
     let img = document.createElement('img');
     img.src = ability.icon;
     img.classList.add('ability-icon');
+    img.classList.add('delete');
+    img.setAttribute('index', index);
     ability_div.appendChild(img);
+  } else {
+    ability_div.innerHTML = "EMPTY";
   }
-
-  let remove_button = document.createElement('button');
-  remove_button.classList.add('delete');
-  remove_button.innerHTML = 'X';
-  remove_button.setAttribute('index', index);
-  ability_div.appendChild(remove_button);
 
   return ability_div;
 }
