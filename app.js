@@ -308,12 +308,20 @@ function applyDirectDamage(target, amount) {
     amount *= 2;
     recentlyFeinted = false;
   }
-  target.hp -= amount;
+  applyDamage(target, amount);
   lastDirectDamage = amount;
 }
 
 function applyIndirectDamage(target, amount) {
+  applyDamage(target, amount);
+}
+
+function applyDamage(target, amount) {
   target.hp -= amount;
+  if(target.hp <= 0) {
+    layer = 2;
+    foe = layer_2_foe;
+  }
 }
 
 function heartstrike(target, attack_power, queue_index) {
@@ -379,8 +387,9 @@ let layer_1_foe = {
 };
 let layer_2_foe = {
   name: 'Ironscale',
-  hp: 5_000,
-  max_hp: 5_000
+  hp: 1_000,
+  max_hp: 1_000,
+  action_limit: 20
 };
 let layer_3_foe = {
   name: 'Zephyr, Wyrm of the Void',
